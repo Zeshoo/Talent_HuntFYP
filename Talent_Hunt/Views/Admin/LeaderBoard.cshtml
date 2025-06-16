@@ -1,0 +1,61 @@
+﻿@model List<Talent_Hunt.Models.LeaderBoard>
+
+@{
+    ViewBag.Title = "Leaderboard";
+}
+
+<div class="container mt-5">
+    <h2 class="text-center mb-4">Event Leaderboard</h2>
+
+    @if (ViewBag.Error != null)
+    {
+        <div class="alert alert-danger">
+            @ViewBag.Error
+        </div>
+    }
+    else if (Model != null && Model.Any())
+    {
+        foreach (var eventItem in Model)
+        {
+            <div class="card mb-4 shadow-sm border-0">
+                <div class="card-body">
+                    <h4 class="card-title text-primary">@eventItem.EventTitle</h4>
+
+                    @if (eventItem.TopThreeToppers != null && eventItem.TopThreeToppers.Any())
+                    {
+                        <table class="table table-bordered text-center mt-3">
+                            <thead class="table-dark">
+                                <tr>
+                                    <th>#</th>
+                                    <th>Student Name</th>
+                                    <th>Marks</th>
+                                    <th>Submission Time</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @for (int i = 0; i < eventItem.TopThreeToppers.Count; i++)
+                                {
+                                    var topper = eventItem.TopThreeToppers[i];
+                                    <tr>
+                                        <td>@(i + 1)</td>
+                                        <td>@topper.StudentName</td>
+                                        <td>@topper.Marks</td>
+                                        <td>@topper.SubmissionTime.ToString("g")</td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    }
+                    else
+                    {
+                        <p class="text-muted">No toppers found for this event.</p>
+                    }
+                </div>
+            </div>
+        }
+    }
+    else
+    {
+        <p class="text-muted">No leaderboard data available.</p>
+    }
+</div>
