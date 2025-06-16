@@ -1,0 +1,75 @@
+﻿@model Talent_Hunt.Models.TaskDetailsWithSubmissionsViewModel
+
+@{
+    ViewBag.Title = "Task Submissions";
+}
+
+<div class="container mt-5">
+    <div class="card shadow-lg border-0 rounded-4">
+        <div class="card-header bg-primary text-white rounded-top-4">
+            <h3 class="mb-0">Task Submissions for @Model.EventTitle</h3>
+            <p class="mb-0">Description: @Model.Description</p>
+        </div>
+
+        <div class="card-body">
+            @if (Model.Submissions != null && Model.Submissions.Count > 0)
+            {
+                <div class="row">
+                    @foreach (var submission in Model.Submissions)
+                    {
+                        var extension = submission.PathofSubmission != null
+                            ? System.IO.Path.GetExtension(submission.PathofSubmission).ToLower()
+                            : "";
+                        var isImage = extension == ".jpg" || extension == ".jpeg" || extension == ".png" || extension == ".gif";
+                        var isPdf = extension == ".pdf";
+
+                        <div class="col-md-4 mb-4">
+                            <a href="@Url.Action("SubmissionDetails", "Admin", new { submissionId = submission.SubmissionID })"
+                               class="text-decoration-none text-dark">
+                                <div class="card h-100 shadow-sm border-0 rounded-4">
+                                    <div class="rounded-top-4 d-flex align-items-center justify-content-center bg-light" style="height: 220px; overflow: hidden;">
+                                        @if (isImage && !string.IsNullOrEmpty(submission.PathofSubmission))
+                                        {
+                                            <img src="http://localhost/TalentHunt1/Images/@System.IO.Path.GetFileName(submission.PathofSubmission)"
+                                                 class="img-fluid w-100"
+                                                 style="object-fit: cover; height: 100%;"
+                                                 onerror="this.onerror=null;this.src='/Content/Images/image-not-found.png';"
+                                                 alt="Submission Image" />
+                                        }
+                                        else if (isPdf)
+                                        {
+                                            <i class="fas fa-file-pdf fa-4x text-danger"></i>
+                                        }
+                                        else
+                                        {
+                                            <span class="text-muted">No Preview Available</span>
+                                        }
+                                    </div>
+                                    <div class="card-body">
+                                        <h5 class="card-title">@submission.UserName</h5>
+                                        <p class="card-text mb-1"><strong>Submitted:</strong> @submission.SubmissionTime.ToString("g")</p>
+                                        <p class="card-text">
+                                            <strong>Marks:</strong>
+                                            @if (submission.Marks.HasValue)
+                                            {
+                                                @submission.Marks
+                                            }
+                                            else
+                                            {
+                                                <span class="text-muted">Not Marked</span>
+                                            }
+                                        </p>
+                                    </div>
+                                </div>
+                            </a>
+                        </div>
+                    }
+                </div>
+            }
+            else
+            {
+                <div class="alert alert-info">No submissions found for this task.</div>
+            }
+        </div>
+    </div>
+</div>
