@@ -1,0 +1,67 @@
+﻿@model Talent_Hunt.Models.CompareTwoViewModel
+
+@{
+    ViewBag.Title = "Compare Submissions";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2 class="text-center text-primary mt-4">Compare Submissions</h2>
+
+@using (Html.BeginForm("SaveComparison", "Admin", FormMethod.Post))
+{
+    @Html.AntiForgeryToken()
+
+    <div class="row mt-4">
+        <!-- Submission 1 -->
+        <div class="col-md-6 text-center border-end">
+            <h5>@Model.User1?.Name ?? "No Name"</h5>
+            <img src="http://localhost/TalentHunt1/Images/@Model.Submission1?.PathofSubmission"
+                 class="img-fluid rounded shadow mb-3" style="max-height: 300px;" />
+
+            <div class="form-group">
+                <label for="Marks1">Marks:</label>
+                <select name="Marks1" class="form-select w-50 m-auto mb-3">
+                    @for (int i = 0; i <= 10; i++)
+                    {
+                        <option value="@i">@i</option>
+                    }
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="Comment1">Comment:</label>
+                <textarea name="Comment1" class="form-control mb-3" rows="3" placeholder="Write your feedback here..."></textarea>
+            </div>
+
+            <input type="hidden" name="SubmissionId1" value="@Model.Submission1?.Id" />
+        </div>
+
+        <!-- Submission 2 -->
+        <div class="col-md-6 text-center">
+            <h5>@Model.User2?.Name ?? "No Name"</h5>
+            <img src="http://localhost/TalentHunt1/Images/@Model.Submission2?.PathofSubmission"
+                 class="img-fluid rounded shadow mb-3" style="max-height: 300px;" />
+
+            <div class="form-group">
+                <label for="Marks2">Marks:</label>
+                <select name="Marks2" class="form-select w-50 m-auto mb-3">
+                    @for (int i = 0; i <= 10; i++)
+                    {
+                        <option value="@i">@i</option>
+                    }
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="Comment2">Comment:</label>
+                <textarea name="Comment2" class="form-control mb-3" rows="3" placeholder="Write your feedback here..."></textarea>
+            </div>
+
+            <input type="hidden" name="SubmissionId2" value="@Model.Submission2?.Id" />
+        </div>
+    </div>
+
+    <div class="text-center mt-4">
+        <button type="submit" class="btn btn-success px-5">Save Evaluation</button>
+    </div>
+}

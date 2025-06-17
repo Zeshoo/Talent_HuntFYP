@@ -1,0 +1,28 @@
+﻿@model List<Talent_Hunt.Models.Submission>
+
+@{
+    ViewBag.Title = "Select Submission to Compare";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2 class="text-primary mt-4 text-center">Choose Submission to Compare</h2>
+
+<div class="container mt-4">
+    <div class="row">
+        @foreach (var submission in Model)
+        {
+            <div class="col-md-4 mb-4">
+                <div class="card shadow">
+                    <img src="http://localhost/TalentHunt1/Images/@submission.PathofSubmission"
+                         class="card-img-top"
+                         style="height: 200px; object-fit: contain;" />
+                    <div class="card-body text-center">
+                        @*<h5 class="card-title">@submission.Users.Name</h5>*@
+                        <a href="@Url.Action("CompareTwoSubmissions", "Admin", new { id1 = ViewBag.CurrentSubmissionId, id2 = submission.Id })"
+                           class="btn btn-primary">Compare With This</a>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+</div>

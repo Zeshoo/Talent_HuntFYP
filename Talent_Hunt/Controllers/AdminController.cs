@@ -12,6 +12,7 @@ using System.Text.Json;
 using System.Threading.Tasks;
 using System.Web;
 using System.Web.Mvc;
+using System.Data.Entity; // needed for Include()
 
 using Talent_Hunt.Models;
 //using System.Net.Http.Formatting;
@@ -1085,6 +1086,53 @@ namespace Talent_Hunt.Controllers
                 return new HttpStatusCodeResult(500, "Internal Server Error: " + ex.Message);
             }
         }
+        [HttpGet]
+        public ActionResult ViewSubmissionsforcompare(int taskId)
+        {
+            int currentSubmissionId = Convert.ToInt32(TempData["CurrentSubmissionId"]);
+
+            using (var db = new Talent_HuntEntities3())
+            {
+                var otherSubmissions = db.Submission
+                    .Where(s => s.TaskID == taskId && s.Id != currentSubmissionId)
+                    .ToList();
+
+                ViewBag.CurrentSubmissionId = currentSubmissionId;
+
+                return View(otherSubmissions);
+            }
+        }
+    
+
+[HttpGet]
+        public ActionResult CompareTwoSubmissions(int id1, int id2)
+        {
+            using (var db = new Talent_HuntEntities3())
+            {
+                var sub1 = db.Submission.FirstOrDefault(s => s.Id == id1);
+                var sub2 = db.Submission.FirstOrDefault(s => s.Id == id2);
+
+                if (sub1 == null || sub2 == null)
+                {
+                    ViewBag.Error = "One or both submissions not found.";
+                    return View("Error");
+                }
+
+                var user1 = db.Users.FirstOrDefault(u => u.Id == sub1.UserID);
+                var user2 = db.Users.FirstOrDefault(u => u.Id == sub2.UserID);
+
+                var model = new CompareTwoViewModel
+                {
+                    Submission1 = sub1,
+                    Submission2 = sub2,
+                    User1 = user1,
+                    User2 = user2
+                };
+
+                return View(model);
+            }
+        }
+
 
         [HttpPost]
         [ValidateAntiForgeryToken]
