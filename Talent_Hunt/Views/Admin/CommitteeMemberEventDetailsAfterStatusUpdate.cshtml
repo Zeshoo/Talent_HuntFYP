@@ -19,14 +19,11 @@
             <i class="fas fa-calendar-day fs-3"></i> @Model.Title
         </h1>
 
-        <!-- Apply Button -->
         <!-- Show Tasks Link -->
         <a href="@Url.Action("ShowTasksForCommitteeMember", "Admin", new { EventId = Model.Id })"
            class="btn btn-primary btn-lg rounded-pill px-4 d-flex align-items-center gap-2">
             <i class="fas fa-paper-plane"></i> Show Tasks
         </a>
-
-
     </div>
 
     <div class="card shadow rounded-4 p-4">
@@ -44,49 +41,44 @@
                 <form>
                     <!-- Event Title -->
                     <div class="mb-4">
-                        <label class="form-label fw-semibold text-primary fs-5">Event Title</label>
-                        <input type="text" name="Title" class="form-control form-control-lg rounded-3" value="@Model.Title" readonly />
+                        <label class="form-label fw-bold text-primary">Event Title</label>
+                        <input type="text" name="Title" class="form-control rounded-3 py-2" value="@Model.Title" readonly />
                     </div>
 
                     <!-- Event Date -->
-                    <div class="row mb-4 g-3">
-                        <div class="col-md-6">
-                            <label class="form-label fw-semibold fs-6">Event Date</label>
-                            <input type="date" name="EventDate" class="form-control form-control-lg rounded-3" value="@Model.EventDate" readonly />
-                        </div>
+                    <div class="mb-4">
+                        <label class="form-label fw-bold">Event Date</label>
+                        <input type="date" name="EventDate" class="form-control rounded-3 py-2" value="@Model.EventDate" readonly />
                     </div>
 
-                    <!-- Registration Period -->
-                    <div class="row mb-4 g-3">
-                        <div class="col-md-6">
-                            <label class="form-label fw-semibold fs-6">Registration Period</label>
-                            <div class="row g-2">
-                                <div class="col-6">
-                                    <input type="date" name="RegStartDate" class="form-control form-control-lg rounded-3" value="@Model.RegStartDate" readonly />
-                                </div>
-                                <div class="col-6">
-                                    <input type="date" name="RegEndDate" class="form-control form-control-lg rounded-3" value="@Model.RegEndDate" readonly />
-                                </div>
-                            </div>
-                        </div>
+                    <!-- Registration Start Date -->
+                    <div class="mb-4">
+                        <label class="form-label fw-bold">Registration Start Date</label>
+                        <input type="date" name="RegStartDate" class="form-control rounded-3 py-2" value="@Model.RegStartDate" readonly />
                     </div>
 
-                    <!-- Event Time -->
-                    <div class="row mb-4 g-3">
-                        <div class="col-md-6">
-                            <label class="form-label fw-semibold fs-6">Event Time</label>
-                            <div class="row g-2">
-                                <div class="col-6">
-                                    <input type="time" name="EventStartTime" class="form-control form-control-lg rounded-3" value="@Model.EventStartTime" readonly />
-                                </div>
-                                <div class="col-6">
-                                    <input type="time" name="EventEndTime" class="form-control form-control-lg rounded-3" value="@Model.EventEndTime" readonly />
-                                </div>
-                                <div class="col-6">
-                                    <input type="time" name="Details" class="form-control form-control-lg rounded-3" value="@Model.Details" readonly />
-                                </div>
-                            </div>
-                        </div>
+                    <!-- Registration End Date -->
+                    <div class="mb-4">
+                        <label class="form-label fw-bold">Registration End Date</label>
+                        <input type="date" name="RegEndDate" class="form-control rounded-3 py-2" value="@Model.RegEndDate" readonly />
+                    </div>
+
+                    <!-- Event Start Time -->
+                    <div class="mb-4">
+                        <label class="form-label fw-bold">Event Start Time</label>
+                        <input type="time" name="EventStartTime" class="form-control rounded-3 py-2" value="@Model.EventStartTime" readonly />
+                    </div>
+
+                    <!-- Event End Time -->
+                    <div class="mb-4">
+                        <label class="form-label fw-bold">Event End Time</label>
+                        <input type="time" name="EventEndTime" class="form-control rounded-3 py-2" value="@Model.EventEndTime" readonly />
+                    </div>
+
+                    <!-- Event Description -->
+                    <div class="mb-4">
+                        <label class="form-label fw-bold text-primary">Description</label>
+                        <textarea name="Details" class="form-control rounded-3 py-2" rows="5" readonly>@Model.Details</textarea>
                     </div>
                 </form>
             </div>
@@ -118,14 +110,16 @@
             box-shadow: 0 10px 20px rgba(13, 110, 253, 0.4);
         }
 
-    input[readonly] {
+    input[readonly],
+    textarea[readonly] {
         background-color: #f8f9fa !important;
         color: #495057 !important;
         cursor: not-allowed;
         box-shadow: none !important;
     }
 
-    input:focus {
+    input:focus,
+    textarea:focus {
         border-color: #0d6efd !important;
         box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25) !important;
     }

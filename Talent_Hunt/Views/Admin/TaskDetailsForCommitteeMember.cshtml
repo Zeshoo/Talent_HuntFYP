@@ -19,45 +19,33 @@
         <div class="card-body">
             @if (Model != null)
             {
-                <!--<div class="row mb-3">
-                    <div class="col-md-6">
-                        <label class="fw-bold">Task ID:</label>
-                        <p>@Model.Id</p>
-                    </div>
-                    <div class="col-md-6">
-                        <label class="fw-bold">Event ID:</label>-->
-                        @*<p>@Model.EventID</p>*@
-                    <!--</div>
-                </div>-->
-
                 <div class="row mb-3">
                     <div class="col-md-6">
-                        <label class="fw-bold">Start Time:</label>
-                        <p>@DateTime.Parse(Model.TaskStartTime).ToString("hh:mm tt")</p>
+                        <label class="fw-bold text-primary">Start Time:</label>
+                        <p class="mb-0">@DateTime.Parse(Model.TaskStartTime).ToString("hh:mm tt")</p>
                     </div>
                     <div class="col-md-6">
-                        <label class="fw-bold">End Time:</label>
-                        <p>@DateTime.Parse(Model.TaskEndTime).ToString("hh:mm tt")</p>
+                        <label class="fw-bold text-primary">End Time:</label>
+                        <p class="mb-0">@DateTime.Parse(Model.TaskEndTime).ToString("hh:mm tt")</p>
                     </div>
                 </div>
 
-                <div class="mb-3">
-                    <label class="fw-bold">Description:</label>
-                    <p>@Model.Description</p>
+                <div class="mb-4">
+                    <label class="fw-bold text-primary">Description:</label>
+                    <p class="border p-3 rounded bg-light">@Model.Description</p>
                 </div>
 
-                <div class="card h-100 shadow rounded-4 overflow-hidden task-card" style="transition: transform 0.2s;">
+                <div class="card shadow-sm rounded-4 overflow-hidden task-card mx-auto" style="max-width: 400px;">
                     @if (!string.IsNullOrEmpty(Model.Image))
                     {
                         <img src="http://localhost/TalentHunt1/Images/@Model.Image"
-                             class="card-img-top"
-                             style="height: 200px; object-fit: cover;"
+                             class="img-fluid rounded-3 border"
+                             style="max-height: 240px; object-fit: cover; width: 100%;"
                              alt="Task Image" />
                     }
                     else
                     {
-                        <div class="bg-light d-flex justify-content-center align-items-center"
-                             style="height: 200px; color: #888;">
+                        <div class="bg-light text-center py-5 rounded-3 border" style="color: #888;">
                             No Image Available
                         </div>
                     }
@@ -65,7 +53,7 @@
             }
             else
             {
-                <div class="alert alert-warning">Task details not found.</div>
+                <div class="alert alert-warning mt-3">Task details not found.</div>
             }
         </div>
     </div>
