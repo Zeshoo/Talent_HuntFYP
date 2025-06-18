@@ -19,10 +19,7 @@ namespace Talent_Hunt.Models
         public string Details { get; set; }
 
         // New properties from Marks table
-        public int MarksId { get; set; }               // Corresponds to Marks.Id
-        public int SubmissionID { get; set; }          // Corresponds to Marks.SubmissionID (can be same as Id or different)
-        public int CommitteeMemberID { get; set; }     // Marks.CommitteeMemberID
-        public int Marks1 { get; set; }                  // Marks.Marks (or Marks1 in your API)
+      
     }
 }
 

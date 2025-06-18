@@ -50,7 +50,8 @@
         <button type="button" class="btn btn-success px-4" onclick="submitMarks()">Submit Marks</button>
     </div>
     <div class="text-center mt-4">
-        <a href="@Url.Action("ViewSubmissionsforcompare", "Admin", new { taskId = Model.TaskID })" class="btn btn-info px-4">Compare</a>
+        <a href="@Url.Action("ViewSubmissionsforcompare", "Admin", new { taskId = Model.TaskID, currentSubmissionId = Model.Id })" class="btn btn-info px-4">Compare</a>
+
 
     </div>
 </div>

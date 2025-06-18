@@ -17,24 +17,21 @@
                 <div class="row">
                     @foreach (var submission in Model.Submissions)
                     {
-                        var extension = submission.PathofSubmission != null
-                            ? System.IO.Path.GetExtension(submission.PathofSubmission).ToLower()
-                            : "";
+                        var extension = System.IO.Path.GetExtension(submission.PathofSubmission ?? "").ToLower();
                         var isImage = extension == ".jpg" || extension == ".jpeg" || extension == ".png" || extension == ".gif";
                         var isPdf = extension == ".pdf";
 
                         <div class="col-md-4 mb-4">
-                            <a href="@Url.Action("SubmissionDetails", "Admin", new { submissionId = submission.SubmissionID })"
-                               class="text-decoration-none text-dark">
+                            <a href="@Url.Action("SubmissionDetails", "Admin", new { submissionId = submission.SubmissionID })" class="text-decoration-none text-dark d-block">
                                 <div class="card h-100 shadow-sm border-0 rounded-4">
                                     <div class="rounded-top-4 d-flex align-items-center justify-content-center bg-light" style="height: 220px; overflow: hidden;">
-                                        @if (isImage && !string.IsNullOrEmpty(submission.PathofSubmission))
+                                        @if (isImage)
                                         {
                                             <img src="http://localhost/TalentHunt1/Images/@System.IO.Path.GetFileName(submission.PathofSubmission)"
                                                  class="img-fluid w-100"
                                                  style="object-fit: cover; height: 100%;"
-                                                 onerror="this.onerror=null;this.src='/Content/Images/image-not-found.png';"
-                                                 alt="Submission Image" />
+                                                 alt="Submission Image"
+                                                 onerror="this.onerror=null;this.src='/Content/Images/image-not-found.png';" />
                                         }
                                         else if (isPdf)
                                         {
@@ -45,20 +42,35 @@
                                             <span class="text-muted">No Preview Available</span>
                                         }
                                     </div>
+
                                     <div class="card-body">
                                         <h5 class="card-title">@submission.UserName</h5>
                                         <p class="card-text mb-1"><strong>Submitted:</strong> @submission.SubmissionTime.ToString("g")</p>
+
                                         <p class="card-text">
-                                            <strong>Marks:</strong>
-                                            @if (submission.Marks.HasValue)
+                                            <strong>Highest Marks:</strong>
+                                            @if (submission.HighestMarks.HasValue)
                                             {
-                                                @submission.Marks
+                                                @submission.HighestMarks
+                                                <br />
+                                                <small class="text-muted">By: @submission.HighestBy</small>
                                             }
                                             else
                                             {
                                                 <span class="text-muted">Not Marked</span>
                                             }
                                         </p>
+
+                                        @if (submission.AllMarks != null && submission.AllMarks.Count > 1)
+                                        {
+                                            <p class="card-text"><strong>All Marks:</strong></p>
+                                            <ul class="list-unstyled mb-0">
+                                                @foreach (var mark in submission.AllMarks)
+                                                {
+                                                    <li>@mark.CommitteeMemberName: @mark.Marks1</li>
+                                                }
+                                            </ul>
+                                        }
                                     </div>
                                 </div>
                             </a>

@@ -1,0 +1,133 @@
+﻿@model Talent_Hunt.Models.CompareTwoViewModel
+
+@{
+    ViewBag.Title = "Compare Submissions";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2 class="text-center text-primary mt-4">Compare Submissions</h2>
+
+@using (Html.BeginForm("SaveComparison", "Admin", FormMethod.Post))
+{
+    @Html.AntiForgeryToken()
+
+    <input type="hidden" id="CommitteeMemberId" value="@ViewBag.CommitteeMemberId" />
+
+    <div class="row mt-4">
+        <!-- Submission 1 -->
+        <div class="col-md-6 text-center border-end">
+            <h5>@(Model.User1 != null ? Model.User1.Name : "No Name")</h5>
+
+            <img src="http://localhost/TalentHunt1/Images/@Model.Submission1.PathofSubmission"
+                 class="card-img-top"
+                 style="height: 200px; object-fit: contain;" />
+
+            <div class="form-group">
+                <label for="Marks1">Marks:</label>
+                <select name="Marks1" id="Marks1" class="form-select w-50 m-auto mb-3">
+                    @for (int i = 0; i <= 10; i++)
+                    {
+                        <option value="@i">@i</option>
+                    }
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="Comment1">Comment:</label>
+                <textarea name="Comment1" id="Comment1" class="form-control mb-3" rows="3" placeholder="Write your feedback here..."></textarea>
+            </div>
+
+            <input type="hidden" name="SubmissionId1" id="SubmissionId1" value="@(Model.Submission1?.Id ?? 0)" />
+        </div>
+
+        <!-- Submission 2 -->
+        <div class="col-md-6 text-center">
+            <h5>@(Model.User2 != null ? Model.User2.Name : "No Name")</h5>
+
+            <img src="http://localhost/TalentHunt1/Images/@Model.Submission2.PathofSubmission"
+                 class="card-img-top"
+                 style="height: 200px; object-fit: contain;" />
+
+            <div class="form-group">
+                <label for="Marks2">Marks:</label>
+                <select name="Marks2" id="Marks2" class="form-select w-50 m-auto mb-3">
+                    @for (int i = 0; i <= 10; i++)
+                    {
+                        <option value="@i">@i</option>
+                    }
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="Comment2">Comment:</label>
+                <textarea name="Comment2" id="Comment2" class="form-control mb-3" rows="3" placeholder="Write your feedback here..."></textarea>
+            </div>
+
+            <input type="hidden" name="SubmissionId2" id="SubmissionId2" value="@(Model.Submission2?.Id ?? 0)" />
+        </div>
+    </div>
+
+    <div class="text-center mt-4">
+        <button type="button" class="btn btn-success px-4" onclick="submitMarks()">save marks</button>
+    </div>
+}
+
+<script>
+    function submitMarks() {
+        const token = document.querySelector('input[name="__RequestVerificationToken"]').value;
+        const committeeMemberId = document.getElementById("CommitteeMemberId").value;
+
+        if (!committeeMemberId || committeeMemberId === "0") {
+            alert("Committee Member ID is missing. Please log in again.");
+            return;
+        }
+
+        const submission1 = {
+            SubmissionId: document.getElementById("SubmissionId1").value,
+            CommitteeMemberId: committeeMemberId,
+            Marks: document.getElementById("Marks1").value,
+            Comment: document.getElementById("Comment1").value,
+            __RequestVerificationToken: token
+        };
+
+        const submission2 = {
+            SubmissionId: document.getElementById("SubmissionId2").value,
+            CommitteeMemberId: committeeMemberId,
+            Marks: document.getElementById("Marks2").value,
+            Comment: document.getElementById("Comment2").value,
+            __RequestVerificationToken: token
+        };
+
+        Promise.all([
+            fetch('/Admin/Marks', {
+                method: 'POST',
+                headers: { 'RequestVerificationToken': token },
+                body: toFormData(submission1)
+            }),
+            fetch('/Admin/Marks', {
+                method: 'POST',
+                headers: { 'RequestVerificationToken': token },
+                body: toFormData(submission2)
+            })
+        ]).then(([res1, res2]) => {
+            if (res1.ok && res2.ok) {
+                const submissionId1 = document.getElementById("SubmissionId1").value;
+                alert("Marks submitted successfully.");
+                window.location.href = "/Admin/SubmissionDetails?submissionId=" + submissionId1;
+            } else {
+                alert("Failed to submit both marks.");
+            }
+        }).catch(err => {
+            console.error(err);
+            alert("Error while submitting marks.");
+        });
+    }
+
+    function toFormData(obj) {
+        const formData = new FormData();
+        for (let key in obj) {
+            formData.append(key, obj[key]);
+        }
+        return formData;
+    }
+</script>

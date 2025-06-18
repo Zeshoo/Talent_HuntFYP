@@ -1087,30 +1087,29 @@ namespace Talent_Hunt.Controllers
             }
         }
         [HttpGet]
-        public ActionResult ViewSubmissionsforcompare(int taskId)
+        public ActionResult ViewSubmissionsforcompare(int taskId, int currentSubmissionId)
         {
-            int currentSubmissionId = Convert.ToInt32(TempData["CurrentSubmissionId"]);
-
             using (var db = new Talent_HuntEntities3())
             {
-                var otherSubmissions = db.Submission
-                    .Where(s => s.TaskID == taskId && s.Id != currentSubmissionId)
-                    .ToList();
+                var submissions = db.Submission
+                                    .Where(s => s.TaskID == taskId)
+                                    .ToList();
 
-                ViewBag.CurrentSubmissionId = currentSubmissionId;
-
-                return View(otherSubmissions);
+                ViewBag.CurrentSubmissionId = currentSubmissionId; // This is what was missing
+                return View(submissions);
             }
         }
-    
 
-[HttpGet]
+
+
+        [HttpGet]
         public ActionResult CompareTwoSubmissions(int id1, int id2)
         {
             using (var db = new Talent_HuntEntities3())
             {
                 var sub1 = db.Submission.FirstOrDefault(s => s.Id == id1);
                 var sub2 = db.Submission.FirstOrDefault(s => s.Id == id2);
+               
 
                 if (sub1 == null || sub2 == null)
                 {
@@ -1128,6 +1127,23 @@ namespace Talent_Hunt.Controllers
                     User1 = user1,
                     User2 = user2
                 };
+                // Retrieve UserId from session
+                if (Session["UserId"] != null)
+                {
+                    int userId = Convert.ToInt32(Session["UserId"]);
+
+                    // Use UserId as CommitteeMemberId
+                    int committeeMemberId = userId;
+
+                    // Optionally assign to ViewBag for view usage
+                    ViewBag.CommitteeMemberId = committeeMemberId;
+                }
+                else
+                {
+                    // Redirect if not logged in
+                    return RedirectToAction("Login", "admin");
+                }
+
 
                 return View(model);
             }
