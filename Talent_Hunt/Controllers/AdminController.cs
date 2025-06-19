@@ -271,6 +271,28 @@ namespace Talent_Hunt.Controllers
             // Return the view and pass the list of events to it
             return View(events);
         }
+        public ActionResult UserEventMarks(int userId)
+        {
+            List<UserEventMarksViewModel> marksList = new List<UserEventMarksViewModel>();
+
+            using (var client = new HttpClient())
+            {
+                client.BaseAddress = new Uri("http://localhost/TalentHunt1/api/"); // replace with your actual base API URL
+                var response = client.GetAsync("Main/GetUserMarksByEvent?userId=" + userId).Result;
+
+                if (response.IsSuccessStatusCode)
+                {
+                    var data = response.Content.ReadAsStringAsync().Result;
+                    marksList = JsonConvert.DeserializeObject<List<UserEventMarksViewModel>>(data);
+                }
+                else
+                {
+                    ViewBag.Error = "Failed to load data.";
+                }
+            }
+
+            return View(marksList);
+        }
         [HttpGet]
         public async Task<ActionResult> CommitteeMemberEventDetailsAfterStatusUpdate(int eventId)
         {
