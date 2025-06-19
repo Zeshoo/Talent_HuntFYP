@@ -1131,7 +1131,6 @@ namespace Talent_Hunt.Controllers
             {
                 var sub1 = db.Submission.FirstOrDefault(s => s.Id == id1);
                 var sub2 = db.Submission.FirstOrDefault(s => s.Id == id2);
-               
 
                 if (sub1 == null || sub2 == null)
                 {
@@ -1142,34 +1141,32 @@ namespace Talent_Hunt.Controllers
                 var user1 = db.Users.FirstOrDefault(u => u.Id == sub1.UserID);
                 var user2 = db.Users.FirstOrDefault(u => u.Id == sub2.UserID);
 
+                var otherSubmissions = db.Submission
+                    .Where(s => s.TaskID == sub1.TaskID && s.Id != id1 && s.Id != id2)
+                    .ToList();
+
+                if (Session["UserId"] == null)
+                {
+                    return RedirectToAction("Login", "Admin");
+                }
+
+                int committeeMemberId = Convert.ToInt32(Session["UserId"]);
+                ViewBag.CommitteeMemberId = committeeMemberId;
+
                 var model = new CompareTwoViewModel
                 {
                     Submission1 = sub1,
                     Submission2 = sub2,
                     User1 = user1,
-                    User2 = user2
+                    User2 = user2,
+                    OtherSubmissions = otherSubmissions
                 };
-                // Retrieve UserId from session
-                if (Session["UserId"] != null)
-                {
-                    int userId = Convert.ToInt32(Session["UserId"]);
 
-                    // Use UserId as CommitteeMemberId
-                    int committeeMemberId = userId;
-
-                    // Optionally assign to ViewBag for view usage
-                    ViewBag.CommitteeMemberId = committeeMemberId;
-                }
-                else
-                {
-                    // Redirect if not logged in
-                    return RedirectToAction("Login", "admin");
-                }
-
-
-                return View(model);
+                return View(model); // 👈 Very important — pass the WHOLE model
             }
         }
+
+
 
 
         [HttpPost]
@@ -1753,6 +1750,42 @@ namespace Talent_Hunt.Controllers
             catch (Exception ex)
             {
                 return new HttpStatusCodeResult(HttpStatusCode.InternalServerError, "Internal server error: " + ex.Message);
+            }
+        }
+        [HttpGet]
+        public ActionResult CompareSubmissions(int selectedSubmissionId)
+        {
+            using (var db = new Talent_HuntEntities3())
+            {
+                // Left: selected submission
+                var selectedSubmission = (from s in db.Submission
+                                          join u in db.Users on s.UserID equals u.Id
+                                          where s.Id == selectedSubmissionId
+                                          select new SubmissionViewModel
+                                          {
+                                              Id = s.Id,
+                                              PathofSubmission = s.PathofSubmission,
+                                              UserName = u.Name,
+                                              TaskID = (int)s.TaskID
+                                          }).FirstOrDefault();
+
+
+                // Right: all other submissions
+                var otherSubmissions = db.Submission
+                    .Where(s => s.Id != selectedSubmissionId && s.TaskID == selectedSubmission.TaskID)
+                    .ToList();
+
+                // Put them into the combo model
+                var model = new CompareSubmissionsViewModel
+                {
+                    SelectedSubmission = selectedSubmission,
+                    OtherSubmissions = otherSubmissions
+                };
+
+                ViewBag.CommitteeMemberId = Session["CommitteeMemberId"];
+
+                // ✅ Pass the combo model to the view
+                return View("CompareSubmissions", model);
             }
         }
 
