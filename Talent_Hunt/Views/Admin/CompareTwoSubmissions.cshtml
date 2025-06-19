@@ -18,11 +18,21 @@
         <div class="col-md-6 text-center border-end">
             <h5>@(Model.User1 != null ? Model.User1.Name : "No Name")</h5>
 
-            <img src="http://localhost/TalentHunt1/Images/@Model.Submission1.PathofSubmission"
-                 class="card-img-top"
-                 style="height: 200px; object-fit: contain;" />
+            <div class="d-flex justify-content-center align-items-start">
+                <img id="submissionImage1"
+                     src="http://localhost/TalentHunt1/Images/@Model.Submission1.PathofSubmission"
+                     class="card-img-top me-3"
+                     style="height: 300px; object-fit: contain; transition: transform 0.3s ease;" />
 
-            <div class="form-group">
+                <!-- Zoom Controls to the right of image -->
+                <!--<div class="d-flex flex-column gap-2 align-items-start">
+                    <button type="button" class="btn btn-sm btn-outline-primary" onclick="zoomImage('submissionImage1', 1.2)">+</button>
+                    <button type="button" class="btn btn-sm btn-outline-secondary" onclick="zoomImage('submissionImage1', 0.8)">−</button>
+                    <button type="button" class="btn btn-sm btn-outline-danger" onclick="resetZoom('submissionImage1')">Reset</button>
+                </div>-->
+            </div>
+
+            <div class="form-group mt-3">
                 <label for="Marks1">Marks:</label>
                 <select name="Marks1" id="Marks1" class="form-select w-50 m-auto mb-3">
                     @for (int i = 0; i <= 10; i++)
@@ -32,10 +42,13 @@
                 </select>
             </div>
 
-            <div class="form-group">
-                <label for="Comment1">Comment:</label>
-                <textarea name="Comment1" id="Comment1" class="form-control mb-3" rows="3" placeholder="Write your feedback here..."></textarea>
-            </div>
+            @* Comment Section Disabled *@
+            @*
+                <div class="form-group">
+                    <label for="Comment1">Comment:</label>
+                    <textarea name="Comment1" id="Comment1" class="form-control mb-3" rows="3" placeholder="Write your feedback here..."></textarea>
+                </div>
+            *@
 
             <input type="hidden" name="SubmissionId1" id="SubmissionId1" value="@(Model.Submission1?.Id ?? 0)" />
         </div>
@@ -44,11 +57,21 @@
         <div class="col-md-6 text-center">
             <h5>@(Model.User2 != null ? Model.User2.Name : "No Name")</h5>
 
-            <img src="http://localhost/TalentHunt1/Images/@Model.Submission2.PathofSubmission"
-                 class="card-img-top"
-                 style="height: 200px; object-fit: contain;" />
+            <div class="d-flex justify-content-center align-items-start">
+                <img id="submissionImage2"
+                     src="http://localhost/TalentHunt1/Images/@Model.Submission2.PathofSubmission"
+                     class="card-img-top me-3"
+                     style="height: 300px; object-fit: contain; transition: transform 0.3s ease;" />
 
-            <div class="form-group">
+                <!-- Zoom Controls to the right of image -->
+                <!--<div class="d-flex flex-column gap-2 align-items-start">
+                    <button type="button" class="btn btn-sm btn-outline-primary" onclick="zoomImage('submissionImage2', 1.2)">+</button>
+                    <button type="button" class="btn btn-sm btn-outline-secondary" onclick="zoomImage('submissionImage2', 0.8)">−</button>
+                    <button type="button" class="btn btn-sm btn-outline-danger" onclick="resetZoom('submissionImage2')">Reset</button>
+                </div>-->
+            </div>
+
+            <div class="form-group mt-3">
                 <label for="Marks2">Marks:</label>
                 <select name="Marks2" id="Marks2" class="form-select w-50 m-auto mb-3">
                     @for (int i = 0; i <= 10; i++)
@@ -58,17 +81,20 @@
                 </select>
             </div>
 
-            <div class="form-group">
-                <label for="Comment2">Comment:</label>
-                <textarea name="Comment2" id="Comment2" class="form-control mb-3" rows="3" placeholder="Write your feedback here..."></textarea>
-            </div>
+            @* Comment Section Disabled *@
+            @*
+                <div class="form-group">
+                    <label for="Comment2">Comment:</label>
+                    <textarea name="Comment2" id="Comment2" class="form-control mb-3" rows="3" placeholder="Write your feedback here..."></textarea>
+                </div>
+            *@
 
             <input type="hidden" name="SubmissionId2" id="SubmissionId2" value="@(Model.Submission2?.Id ?? 0)" />
         </div>
     </div>
 
     <div class="text-center mt-4">
-        <button type="button" class="btn btn-success px-4" onclick="submitMarks()">save marks</button>
+        <button type="button" class="btn btn-success px-4" onclick="submitMarks()">Save Marks</button>
     </div>
 }
 
@@ -86,7 +112,7 @@
             SubmissionId: document.getElementById("SubmissionId1").value,
             CommitteeMemberId: committeeMemberId,
             Marks: document.getElementById("Marks1").value,
-            Comment: document.getElementById("Comment1").value,
+            Comment: "", // Comment removed
             __RequestVerificationToken: token
         };
 
@@ -94,7 +120,7 @@
             SubmissionId: document.getElementById("SubmissionId2").value,
             CommitteeMemberId: committeeMemberId,
             Marks: document.getElementById("Marks2").value,
-            Comment: document.getElementById("Comment2").value,
+            Comment: "", // Comment removed
             __RequestVerificationToken: token
         };
 
@@ -130,4 +156,31 @@
         }
         return formData;
     }
+
+    // Zoom functionality per image
+    const zoomLevels = {};
+
+    function zoomImage(imageId, factor) {
+        const img = document.getElementById(imageId);
+
+        // Initialize zoom level if not present
+        zoomLevels[imageId] = zoomLevels[imageId] || 1;
+
+        // Calculate new zoom level
+        const newZoom = zoomLevels[imageId] * factor;
+
+        // Clamp zoom between 0.5 and 3
+        if (newZoom < 0.5 || newZoom > 3) return;
+
+        zoomLevels[imageId] = newZoom;
+        img.style.transform = `scale(${zoomLevels[imageId]})`;
+    }
+
+    function resetZoom(imageId) {
+        const img = document.getElementById(imageId);
+        zoomLevels[imageId] = 1;
+        img.style.transform = "scale(1)";
+    }
+
+   
 </script>

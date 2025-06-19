@@ -1114,13 +1114,14 @@ namespace Talent_Hunt.Controllers
             using (var db = new Talent_HuntEntities3())
             {
                 var submissions = db.Submission
-                                    .Where(s => s.TaskID == taskId)
+                                    .Where(s => s.TaskID == taskId && s.Id != currentSubmissionId) // exclude current submission
                                     .ToList();
 
-                ViewBag.CurrentSubmissionId = currentSubmissionId; // This is what was missing
+                ViewBag.CurrentSubmissionId = currentSubmissionId;
                 return View(submissions);
             }
         }
+
 
 
 

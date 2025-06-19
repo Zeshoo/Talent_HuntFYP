@@ -13,12 +13,37 @@
         @Html.AntiForgeryToken()
     }
 
-    <!-- Submission Image -->
-    <div class="text-center mb-4">
-        <img src="http://localhost/TalentHunt1/Images/@Model.PathofSubmission"
+    <!-- Submission Image with Zoom Buttons in Top-Right Corner -->
+    <div class="text-center mb-4 position-relative d-inline-block">
+        <img id="submissionImage"
+             src="http://localhost/TalentHunt1/Images/@Model.PathofSubmission"
              class="img-fluid rounded shadow-sm"
-             style="max-height: 300px; object-fit: contain;"
+             style="max-height: 300px; object-fit: contain; transition: transform 0.3s ease;"
              alt="Submission Image" />
+
+        <!-- Zoom Buttons in Top-Right -->
+        <div style="position: absolute; top: 10px; right: 10px; display: flex; flex-direction: column; gap: 5px;">
+            <button type="button"
+                    class="btn btn-sm btn-outline-primary"
+                    title="Zoom In"
+                    onclick="zoomImage(1.2)">
+                +
+            </button>
+
+            <button type="button"
+                    class="btn btn-sm btn-outline-secondary"
+                    title="Zoom Out"
+                    onclick="zoomImage(0.8)">
+                −
+            </button>
+
+            <button type="button"
+                    class="btn btn-sm btn-outline-danger"
+                    title="Reset Zoom"
+                    onclick="resetZoom()">
+                Reset
+            </button>
+        </div>
     </div>
 
     <!-- Display submission details -->
@@ -49,10 +74,10 @@
     <div class="text-center mt-4">
         <button type="button" class="btn btn-success px-4" onclick="submitMarks()">Submit Marks</button>
     </div>
+
+    <!-- Compare Button -->
     <div class="text-center mt-4">
         <a href="@Url.Action("ViewSubmissionsforcompare", "Admin", new { taskId = Model.TaskID, currentSubmissionId = Model.Id })" class="btn btn-info px-4">Compare</a>
-
-
     </div>
 </div>
 
@@ -67,10 +92,8 @@
             return;
         }
 
-        // Get anti-forgery token
         var token = document.querySelector('input[name="__RequestVerificationToken"]').value;
 
-        // Create FormData
         var formData = new FormData();
         formData.append("SubmissionId", submissionId);
         formData.append("CommitteeMemberId", committeeMemberId);
@@ -91,5 +114,19 @@
         .catch(error => {
             alert("Error: " + error);
         });
+    }
+
+    // Zoom functionality
+    let currentScale = 1;
+
+    function zoomImage(factor) {
+        const img = document.getElementById("submissionImage");
+        currentScale *= factor;
+        img.style.transform = `scale(${currentScale})`;
+    }
+
+    function resetZoom() {
+        currentScale = 1;
+        document.getElementById("submissionImage").style.transform = "scale(1)";
     }
 </script>
