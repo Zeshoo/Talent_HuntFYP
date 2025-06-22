@@ -143,6 +143,7 @@ else
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
                 <form id="deleteForm" method="post" action="@Url.Action("DeleteTask", "Admin")">
                     <input type="hidden" name="TaskId" id="deleteTaskId" />
+                    <input type="hidden" name="eventId" value="@eventId" />
                     <button type="submit" class="btn btn-danger">Delete</button>
                 </form>
             </div>

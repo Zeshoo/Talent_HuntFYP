@@ -1300,6 +1300,39 @@ namespace Talent_Hunt.Controllers
                 return RedirectToAction("EventDetails", new { id });
             }
         }
+        [HttpPost]
+        public async Task<ActionResult> DeleteTask(int TaskId, int eventId)
+        {
+            try
+            {
+                var taskRequest = new { TaskId = TaskId };
+
+                using (var client = new HttpClient())
+                {
+                    client.BaseAddress = new Uri("http://localhost/TalentHunt1/");
+                    var jsonContent = JsonConvert.SerializeObject(taskRequest);
+                    var content = new StringContent(jsonContent, Encoding.UTF8, "application/json");
+
+                    var response = await client.PostAsync("api/main/DeleteTask", content);
+
+                    if (response.IsSuccessStatusCode)
+                    {
+                        TempData["Success"] = "✅ Task deleted successfully.";
+                    }
+                    else
+                    {
+                        TempData["Error"] = "❌ Failed to delete task.";
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                TempData["Error"] = "⚠️ Error occurred: " + ex.Message;
+            }
+
+            return RedirectToAction("ShowTasks", new { eventId = eventId });
+        }
+
 
         [HttpPost]
         public ActionResult EditEvent(int id)
