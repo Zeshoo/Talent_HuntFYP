@@ -8,9 +8,11 @@ namespace Talent_Hunt.Models
    
         public class UserEventMarksViewModel
         {
-            public string EventTitle { get; set; }
-            public int? Marks { get; set; }  // nullable, in case not marked yet
-        }
+        public string EventTitle { get; set; }
+        public string EventPic { get; set; }
+        public string UserName { get; set; }
+        public double? Marks { get; set; }
+    }
     
 
 

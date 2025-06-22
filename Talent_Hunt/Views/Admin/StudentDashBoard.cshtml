@@ -155,10 +155,10 @@
                 <input class="form-check-input eventFilter" type="radio" name="filter" value="past" />
                 <label class="form-check-label">Past</label>
             </div>
-            <div class="form-check form-check-inline">
-                <input class="form-check-input eventFilter" type="radio" name="filter" value="registered" data-userid="@userId" />
-                <label class="form-check-label">Result of registered event</label>
-            </div>
+            <a class="btn btn-outline-success btn-sm" href="@Url.Action("RegisteredEventResults", "Admin", new { userId = userId })">
+                <i class="fas fa-list-check me-1"></i>Result of Registered Event
+            </a>
+
 
             <!-- Registered Events Redirect -->
             <a class="btn btn-outline-primary btn-sm ms-auto" href="@Url.Action("RegisteredEvents", "Admin", new { UserId = userId })">

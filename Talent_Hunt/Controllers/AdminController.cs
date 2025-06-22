@@ -271,28 +271,67 @@ namespace Talent_Hunt.Controllers
             // Return the view and pass the list of events to it
             return View(events);
         }
+        [HttpGet]
         public ActionResult UserEventMarks(int userId)
         {
             List<UserEventMarksViewModel> marksList = new List<UserEventMarksViewModel>();
 
-            using (var client = new HttpClient())
+            try
             {
-                client.BaseAddress = new Uri("http://localhost/TalentHunt1/api/"); // replace with your actual base API URL
-                var response = client.GetAsync("Main/GetUserMarksByEvent?userId=" + userId).Result;
+                using (var client = new HttpClient())
+                {
+                    client.BaseAddress = new Uri("http://localhost/TalentHunt1/api/");
+                    var response = client.GetAsync($"main/GetUserMarksByEvent?userId={userId}").Result;
 
-                if (response.IsSuccessStatusCode)
-                {
-                    var data = response.Content.ReadAsStringAsync().Result;
-                    marksList = JsonConvert.DeserializeObject<List<UserEventMarksViewModel>>(data);
-                }
-                else
-                {
-                    ViewBag.Error = "Failed to load data.";
+                    if (response.IsSuccessStatusCode)
+                    {
+                        var jsonData = response.Content.ReadAsStringAsync().Result;
+                        marksList = JsonConvert.DeserializeObject<List<UserEventMarksViewModel>>(jsonData);
+                    }
+                    else
+                    {
+                        ViewBag.Error = "Failed to retrieve user marks from the API.";
+                    }
                 }
             }
+            catch (Exception ex)
+            {
+                ViewBag.Error = "An error occurred while calling the API: " + ex.Message;
+            }
 
-            return View(marksList);
+            return PartialView("_RegisteredEventsResultPartial", marksList); // returning partial as used in AJAX
         }
+        [HttpGet]
+        public ActionResult RegisteredEventResults(int userId)
+        {
+            List<UserEventMarksViewModel> marksList = new List<UserEventMarksViewModel>();
+
+            try
+            {
+                using (var client = new HttpClient())
+                {
+                    client.BaseAddress = new Uri("http://localhost/TalentHunt1/api/");
+                    var response = client.GetAsync("main/GetUserMarksByEvent?userId=" + userId).Result;
+
+                    if (response.IsSuccessStatusCode)
+                    {
+                        var data = response.Content.ReadAsStringAsync().Result;
+                        marksList = JsonConvert.DeserializeObject<List<UserEventMarksViewModel>>(data);
+                    }
+                    else
+                    {
+                        ViewBag.Error = "Failed to load data from API.";
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                ViewBag.Error = "Something went wrong: " + ex.Message;
+            }
+
+            return View(marksList); // returns normal view
+        }
+
         [HttpGet]
         public async Task<ActionResult> CommitteeMemberEventDetailsAfterStatusUpdate(int eventId)
         {
@@ -887,23 +926,26 @@ namespace Talent_Hunt.Controllers
             using (var client = new HttpClient())
             {
                 client.BaseAddress = new Uri("http://localhost/TalentHunt1/");
+
                 HttpResponseMessage response = await client.GetAsync($"api/Main/GenerateEventReport?eventId={eventId}");
 
                 if (response.IsSuccessStatusCode)
                 {
                     var jsonString = await response.Content.ReadAsStringAsync();
 
-                    // ✅ Use Newtonsoft safely (JsonConvert)
+                    // Deserialize into a ViewModel that matches the structure of the API result
                     var eventReport = JsonConvert.DeserializeObject<EventReportViewModel>(jsonString);
+
                     return View(eventReport);
                 }
                 else
                 {
                     ViewBag.Error = "Failed to load report.";
-                    return View();
+                    return View(new EventReportViewModel()); // return an empty view model
                 }
             }
         }
+
 
 
 

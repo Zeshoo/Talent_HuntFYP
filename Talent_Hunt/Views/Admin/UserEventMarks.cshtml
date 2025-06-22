@@ -1,42 +1,21 @@
 ﻿@model List<Talent_Hunt.Models.UserEventMarksViewModel>
-@{
-    ViewBag.Title = "My Event Marks";
-}
 
-<div class="container mt-5">
-    <div class="card shadow-sm rounded">
-        <div class="card-header bg-primary text-white">
-            <h4 class="mb-0">Your Event Marks</h4>
-        </div>
-        <div class="card-body">
-            @if (ViewBag.Error != null)
-            {
-                <div class="alert alert-danger">@ViewBag.Error</div>
-            }
-            else if (Model != null && Model.Any())
-            {
-                <table class="table table-bordered table-hover">
-                    <thead class="table-primary">
-                        <tr>
-                            <th>Event Title</th>
-                            <th>Marks</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @foreach (var item in Model)
-                        {
-                            <tr>
-                                <td>@item.EventTitle</td>
-                                <td>@(item.Marks.HasValue ? item.Marks.ToString() : "Not Marked")</td>
-                            </tr>
-                        }
-                    </tbody>
-                </table>
-            }
-            else
-            {
-                <p>No records found.</p>
-            }
-        </div>
-    </div>
-</div>
+<h4 class="text-primary">Marks of Registered Events</h4>
+<table class="table table-bordered mt-3">
+    <thead class="table-light">
+        <tr>
+            <th>Event Title</th>
+            <th>Marks</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>@item.EventTitle</td>
+                <td>@(item.Marks.HasValue ? item.Marks.Value.ToString("0.##") : "Not Available")</td>
+
+            </tr>
+        }
+    </tbody>
+</table>

@@ -16,7 +16,7 @@ namespace Talent_Hunt.Models
         public class TopperInfo
         {
             public string StudentName { get; set; }
-            public int Marks { get; set; }
+            public double AverageMarks { get; set; }
             public DateTime SubmissionTime { get; set; }
         }
     

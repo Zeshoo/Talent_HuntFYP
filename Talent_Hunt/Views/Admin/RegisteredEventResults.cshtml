@@ -1,0 +1,37 @@
+﻿@model List<Talent_Hunt.Models.UserEventMarksViewModel>
+
+@{
+    ViewBag.Title = "Registered Event Results";
+}
+
+<h2 class="text-primary">Registered Event Results</h2>
+
+@if (ViewBag.Error != null)
+{
+    <div class="alert alert-danger">@ViewBag.Error</div>
+}
+else if (Model == null || !Model.Any())
+{
+    <div class="alert alert-warning">No registered event results found.</div>
+}
+else
+{
+    <div class="row">
+        @foreach (var item in Model)
+        {
+            <div class="col-md-6 mb-4">
+                <div class="card shadow-sm rounded-4">
+                    <img src="@($"http://localhost/TalentHunt1/Images/{item.EventPic ?? "default.png"}")"
+                         class="card-img-top"
+                         alt="Event Image"
+                         style="height: 200px; object-fit: cover;" />
+                    <div class="card-body">
+                        <h5 class="card-title text-primary">@item.EventTitle</h5>
+                        <p class="card-text mb-1"><strong>User Name:</strong> @item.UserName</p>
+                        <p class="card-text"><strong>Marks:</strong> @(item.Marks.HasValue ? item.Marks.Value.ToString("0.##") : "Not Available")</p>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+}

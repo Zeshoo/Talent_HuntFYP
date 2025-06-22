@@ -1,70 +1,123 @@
-﻿@model Talent_Hunt.Models.EventReportViewModel
+﻿@*@model Talent_Hunt.Models.EventReportViewModel
+
+    @{
+        ViewBag.Title = "Event Report";
+    }
+
+    <div class="container mt-5">
+        <div class="card shadow-lg border-0 rounded-4">
+            <div class="card-header bg-primary text-white rounded-top-4">
+                <h3 class="mb-0">@Model.Title - Event Report</h3>
+                <p class="mb-0">Date: @Model.EventDate.ToShortDateString() | Participants: @Model.ParticipantCount</p>
+            </div>
+
+            <div class="card-body">
+                @if (Model.Submissions != null && Model.Submissions.Count > 0)
+                {
+                    <div class="row">
+                        @foreach (var submission in Model.Submissions)
+                        {
+                            var extension = System.IO.Path.GetExtension(submission.PathofSubmission ?? "").ToLower();
+                            var isImage = extension == ".jpg" || extension == ".jpeg" || extension == ".png" || extension == ".gif";
+
+                            <div class="col-md-4 mb-4">
+                                <div class="card h-100 shadow-sm border-0 rounded-4">
+                                    <div class="rounded-top-4 d-flex align-items-center justify-content-center bg-light" style="height: 220px; overflow: hidden;">
+                                        @if (isImage)
+                                        {
+                                            <img src="http://localhost/TalentHunt1/Submissions/@System.IO.Path.GetFileName(submission.PathofSubmission)"
+                                                 class="img-fluid w-100"
+                                                 style="object-fit: cover; height: 100%;"
+                                                 alt="Submission Image"
+                                                 onerror="this.onerror=null;this.src='/Content/Images/image-not-found.png';" />
+                                        }
+                                        else
+                                        {
+                                            <span class="text-muted">No Preview Available</span>
+                                        }
+                                    </div>
+
+                                    <div class="card-body">
+                                        <h5 class="card-title">@submission.StudentName</h5>
+                                        <p class="card-text mb-1">
+                                            <strong>Submitted:</strong> @submission.SubmissionTime.ToString("g")
+                                        </p>
+                                        <p class="card-text mb-1">
+                                            <strong>Average Marks:</strong> @submission.AverageMarks.ToString("0.##")
+                                        </p>
+                                        <p class="card-text">
+                                            <strong>Committee Evaluators:</strong> @submission.CommitteeEvaluators
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                        }
+                    </div>
+                }
+                else
+                {
+                    <div class="alert alert-info">No submissions found for this event.</div>
+                }
+            </div>
+        </div>
+    </div>*@
+@model Talent_Hunt.Models.EventReportViewModel
 
 @{
     ViewBag.Title = "Event Report";
 }
 
-<div class="container mt-4">
-    <div class="text-center mb-4">
-        <h2 class="display-6">@Model.Title - Event Report</h2>
-    </div>
-
-    @if (ViewBag.Error != null)
-    {
-        <div class="alert alert-danger shadow-sm rounded">
-            @ViewBag.Error
+<div class="container mt-5">
+    <div class="card shadow-lg border-0 rounded-4">
+        <div class="card-header bg-primary text-white rounded-top-4">
+            <h2 class="mb-0">@Model.Title - Event Report</h2>
         </div>
-    }
-    else
-    {
-        <div class="card shadow mb-5 border-0">
-            <div class="card-body bg-light">
-                <h4 class="card-title text-primary">@Model.Title</h4>
-                <p class="mb-2"><strong>Event Date:</strong> @Model.EventDate</p>
-                <p><strong>Total Participants:</strong> @Model.ParticipantCount</p>
-            </div>
-        </div>
+        <div class="card-body bg-light">
+            <p><strong>Date:</strong> @Model.EventDate.ToShortDateString()</p>
+            <p><strong>Total Participants:</strong> @Model.ParticipantCount</p>
 
-        <div class="card shadow border-0">
-            <div class="card-body">
-                <h5 class="card-title text-secondary mb-3">Submissions</h5>
-
-                @if (Model.Submissions != null && Model.Submissions.Any())
-                {
-                    <table class="table table-hover table-bordered text-center align-middle">
-                        <thead class="table-dark">
-                            <tr>
-                                <th>#</th>
-                                <th>Student Name</th>
-                                <th>Submission Time</th>
-                                @*<th>File</th>*@
-                                <th>Marks</th>
+            <div class="table-responsive">
+                <table class="table table-hover table-bordered align-middle mt-4">
+                    <thead class="table-dark text-center">
+                        <tr>
+                            <th>#</th>
+                            <th>Student Name</th>
+                            <th>Avg. Marks</th>
+                            <th>Committee Count</th>
+                            <th>Submission Time</th>
+                            @*<th>Submission Image</th>*@
+                        </tr>
+                    </thead>
+                    <tbody class="text-center">
+                        @for (int i = 0; i < Model.Submissions.Count; i++)
+                        {
+                            var item = Model.Submissions[i];
+                            <tr class="table-row-hover">
+                                <td>@(i + 1)</td>
+                                <td class="fw-semibold">@item.StudentName</td>
+                                <td>@item.AverageMarks.ToString("0.##")</td>
+                                <td>@item.CommitteeEvaluators</td>
+                                <td>@item.SubmissionTime.ToString("g")</td>
+                                @*<td>
+                                        <img src="@Url.Content("~/Submissions/" + item.PathofSubmission)"
+                                             alt="Submission Image"
+                                             class="img-thumbnail"
+                                             style="max-width: 100px; max-height: 100px;" />
+                                    </td>*@
                             </tr>
-                        </thead>
-                        <tbody>
-                            @for (int i = 0; i < Model.Submissions.Count; i++)
-                            {
-                                var submission = Model.Submissions[i];
-                                <tr>
-                                    <td>@(i + 1)</td>
-                                    <td>@submission.StudentName</td>
-                                    <td>@submission.SubmissionTime</td>
-                                    @*<td>
-                                            <a href="@Url.Content(submission.PathofSubmission)" target="_blank">View File</a>
-                                        </td>*@
-                                    <td>
-                                        @(submission.Marks.HasValue ? submission.Marks.Value.ToString() : "Not Marked")
-                                    </td>
-                                </tr>
-                            }
-                        </tbody>
-                    </table>
-                }
-                else
-                {
-                    <p class="text-muted">No submissions found for this event.</p>
-                }
+                        }
+                    </tbody>
+                </table>
             </div>
         </div>
-    }
+    </div>
 </div>
+
+<style>
+    .table-hover tbody tr:hover {
+        background-color: #dff0ff;
+        transition: background-color 0.3s ease;
+        cursor: pointer;
+    }
+</style>
+
