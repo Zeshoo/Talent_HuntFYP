@@ -945,6 +945,45 @@ namespace Talent_Hunt.Controllers
                 }
             }
         }
+        // GET: User/GetUserMarks/12
+        public ActionResult GetUserMarks(int userId)
+        {
+            var user = db.Users.FirstOrDefault(u => u.Id == userId);
+            if (user == null)
+            {
+                return HttpNotFound("User not found.");
+            }
+
+            // Query valid committee marks
+            var allMarks = (from s in db.Submission
+                            join m in db.Marks on s.Id equals m.SubmissionID
+                            join c in db.Users on m.CommitteeMemberID equals c.Id
+                            where s.UserID == userId && c.Role == "Committee" && m.Marks1 > 0
+                            select new
+                            {
+                                CommitteeMemberName = c.Name,
+                                Marks = m.Marks1,
+                                MarkId = m.Id
+                            }).ToList();
+
+            if (!allMarks.Any())
+            {
+                ViewBag.Message = "No valid marks found for this user.";
+                return View();
+            }
+
+            // Get the latest mark (by highest Mark ID)
+            var latestMark = allMarks.OrderByDescending(x => x.MarkId).FirstOrDefault();
+
+            var model = new UserMarkViewModel
+            {
+                StudentName = user.Name,
+                CommitteeMemberName = latestMark.CommitteeMemberName,
+                Marks = latestMark.Marks.Value
+            };
+
+            return View(model);
+        }
 
 
 

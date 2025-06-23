@@ -15,6 +15,7 @@ namespace Talent_Hunt.Models
 
     public class SubmissionReportItem
     {
+        public int StudentId { get; set; }
         public string StudentName { get; set; }
         public int CommitteeEvaluators { get; set; }
         public double AverageMarks { get; set; }

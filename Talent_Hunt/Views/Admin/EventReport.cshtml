@@ -63,61 +63,40 @@
     </div>*@
 @model Talent_Hunt.Models.EventReportViewModel
 
-@{
-    ViewBag.Title = "Event Report";
-}
+<h2>@Model.Title - Event Report</h2>
+<p><strong>Date:</strong> @Model.EventDate.ToShortDateString()</p>
+<p><strong>Participants:</strong> @Model.ParticipantCount</p>
 
-<div class="container mt-5">
-    <div class="card shadow-lg border-0 rounded-4">
-        <div class="card-header bg-primary text-white rounded-top-4">
-            <h2 class="mb-0">@Model.Title - Event Report</h2>
-        </div>
-        <div class="card-body bg-light">
-            <p><strong>Date:</strong> @Model.EventDate.ToShortDateString()</p>
-            <p><strong>Total Participants:</strong> @Model.ParticipantCount</p>
+<table class="table table-bordered mt-4">
+    <thead class="table-dark">
+        <tr>
+            <th>#</th>
+            <th>Student Name</th>
+            <th>Evaluators</th>
+            <th>Avg. Marks</th>
+            <th>Submission Time</th>
+        </tr>
+    </thead>
+    <tbody>
+        @for (int i = 0; i < Model.Submissions.Count; i++)
+        {
+            var submission = Model.Submissions[i];
+            <tr>
+                <td>@(i + 1)</td>
 
-            <div class="table-responsive">
-                <table class="table table-hover table-bordered align-middle mt-4">
-                    <thead class="table-dark text-center">
-                        <tr>
-                            <th>#</th>
-                            <th>Student Name</th>
-                            <th>Avg. Marks</th>
-                            <th>Committee Count</th>
-                            <th>Submission Time</th>
-                            @*<th>Submission Image</th>*@
-                        </tr>
-                    </thead>
-                    <tbody class="text-center">
-                        @for (int i = 0; i < Model.Submissions.Count; i++)
-                        {
-                            var item = Model.Submissions[i];
-                            <tr class="table-row-hover">
-                                <td>@(i + 1)</td>
-                                <td class="fw-semibold">@item.StudentName</td>
-                                <td>@item.AverageMarks.ToString("0.##")</td>
-                                <td>@item.CommitteeEvaluators</td>
-                                <td>@item.SubmissionTime.ToString("g")</td>
-                                @*<td>
-                                        <img src="@Url.Content("~/Submissions/" + item.PathofSubmission)"
-                                             alt="Submission Image"
-                                             class="img-thumbnail"
-                                             style="max-width: 100px; max-height: 100px;" />
-                                    </td>*@
-                            </tr>
-                        }
-                    </tbody>
-                </table>
-            </div>
-        </div>
-    </div>
-</div>
+                <!-- ✅ Make student name clickable -->
+                <td>
+                    <a href="@Url.Action("GetUserMarks", "Admin", new { userId = submission.StudentId })">
+                        @submission.StudentName
+                    </a>
+                </td>
 
-<style>
-    .table-hover tbody tr:hover {
-        background-color: #dff0ff;
-        transition: background-color 0.3s ease;
-        cursor: pointer;
-    }
-</style>
+                <td>@submission.CommitteeEvaluators</td>
+                <td>@submission.AverageMarks</td>
+                <td>@submission.SubmissionTime.ToString("g")</td>
+            </tr>
+        }
+    </tbody>
+</table>
+
 
