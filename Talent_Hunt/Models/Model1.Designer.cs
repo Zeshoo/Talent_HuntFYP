@@ -1,4 +1,4 @@
-﻿// T4 code generation is enabled for model 'C:\Talent_Hunt-main\Talent_Hunt\Models\Model1.edmx'. 
+﻿// T4 code generation is enabled for model 'C:\Users\zeshan\Downloads\Talent_Hunt_In_Creatiev_Design-master\Talent_Hunt_In_Creatiev_Design-master\Talent_Hunt\Models\Model1.edmx'. 
 // To enable legacy code generation, change the value of the 'Code Generation Strategy' designer
 // property to 'Legacy ObjectContext'. This property is available in the Properties Window when the model
 // is open in the designer.

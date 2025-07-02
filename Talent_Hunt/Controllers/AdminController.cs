@@ -21,7 +21,7 @@ namespace Talent_Hunt.Controllers
 {
     public class AdminController : Controller
     {
-        private Talent_HuntEntities3 db = new Talent_HuntEntities3();
+        private Talent_HuntEntities4 db = new Talent_HuntEntities4();
         private readonly string SignUpApi = "http://localhost/TalentHunt1/api/Main/Signup";
         private readonly string getUserApi = "http://localhost/TalentHunt1/api/Main/getUser";
         private static readonly HttpClient apiClient = new HttpClient();
@@ -29,9 +29,9 @@ namespace Talent_Hunt.Controllers
         //private readonly string ShowTask = "http://localhost/TalentHunt1/api/Main/ShowTask";
         private readonly string createEventApiUrl = "http://localhost/TalentHunt1/api/Main/CreateEvent";
         //private readonly string addRulesApiUrl = "http://localhost/TalentHunt1/api/Main/AddRules";
-        private readonly string assignMemberApiUrl = "http://localhost/TalentHunt1/api/Main/AssignedMembersToEvent";
-        private readonly string addCommitteeMemberApiUrl = "http://localhost/TalentHunt1/api/Main/AddCommitteeMember";
-        private readonly string assignApiUrl = "http://localhost/TalentHunt1/api/Main/AssignedMemberToEvent";
+       // private readonly string assignMemberApiUrl = "http://localhost/TalentHunt1/api/Main/AssignedMembersToEvent";
+       // private readonly string addCommitteeMemberApiUrl = "http://localhost/TalentHunt1/api/Main/AddCommitteeMember";
+      //  private readonly string assignApiUrl = "http://localhost/TalentHunt1/api/Main/AssignedMemberToEvent";
         private readonly string ApplyApi = "http://localhost/TalentHunt1/api/Main/Apply";
         private readonly string ApplicationView = "http://localhost/TalentHunt1/api/Main/ViewApplications";
         private readonly HttpClient client = new HttpClient();
@@ -52,7 +52,8 @@ namespace Talent_Hunt.Controllers
                 ViewBag.Message = "Invalid input.";
                 return View(user);
             }
-
+            string selectedRole = Request["Role"]; // "Student" or "Admin"
+            user.Role = selectedRole;
             var json = JsonConvert.SerializeObject(user);
             var content = new StringContent(json, Encoding.UTF8, "application/json");
 
@@ -331,6 +332,39 @@ namespace Talent_Hunt.Controllers
 
             return View(marksList); // returns normal view
         }
+
+        public ActionResult ShowUserMarks(int userId, int eventId)
+        {
+            using (var db = new Talent_HuntEntities4())
+            {
+                var ma = (from e in db.Event
+                             join t in db.Task on e.Id equals t.EventID
+                             join s in db.Submission on t.Id equals  s.TaskID
+                             join m in db.Marks on s.Id equals m.SubmissionID
+                             where t.EventID == eventId
+                                   && s.UserID == userId
+                                   
+                             group new { e, t, s, m } by new
+                             {
+                                 TaskId = t.Id,
+                                 t.Description,
+                                 CommitteeMemberId = m.CommitteeMemberID
+                                 
+                             } into g
+                             select new UserTaskMarksViewModel
+                             {
+                                 TaskId = g.Key.TaskId,
+                                 TaskDescription = g.Key.Description,
+                                 
+                                 
+                                 HighestMark = g.Max(x => x.m.Marks1)
+                             }).ToList();
+
+                return View(ma);
+            }
+        }
+
+
 
         [HttpGet]
         public async Task<ActionResult> CommitteeMemberEventDetailsAfterStatusUpdate(int eventId)
@@ -734,7 +768,7 @@ namespace Talent_Hunt.Controllers
         }
         [HttpPost]
         public async Task<ActionResult> CreateEvent(HttpPostedFileBase eventImage, string eventTitle, string description,
-                 string regStartDate, string regEndDate, string eventDate, string startTime, string endTime)
+                 string regStartDate, string regEndDate, string eventDate, string startTime, string endTime ,string creatorname)
         {
             try
             {
@@ -743,6 +777,7 @@ namespace Talent_Hunt.Controllers
                     var formData = new MultipartFormDataContent();
 
                     // Add JSON data
+                    string creatorName = Session["UserName"]?.ToString();
                     var eventData = new
                     {
                         Title = eventTitle,
@@ -751,7 +786,9 @@ namespace Talent_Hunt.Controllers
                         RegEndDate = regEndDate,
                         EventDate = eventDate,
                         EventStartTime = startTime,
-                        EventEndTime = endTime
+                        EventEndTime = endTime,
+                        CreatedByName = creatorName
+
                     };
 
                     string jsonContent = JsonConvert.SerializeObject(eventData);
@@ -798,8 +835,8 @@ namespace Talent_Hunt.Controllers
             return View();
         }
 
-        private readonly string showEventsApiUrl = "http://localhost/TalentHunt1/api/Main/ShowAllEvents";
-        private readonly string showTasksApiUrl = "http://localhost/TalentHunt1/api/Main/ShowTask"; // NEW LINE
+        //private readonly string showEventsApiUrl = "http://localhost/TalentHunt1/api/Main/ShowAllEvents";
+      //  private readonly string showTasksApiUrl = "http://localhost/TalentHunt1/api/Main/ShowTask"; // NEW LINE
        // private readonly string saveTaskApiUrl = "http://localhost/TalentHunt1/api/Main/CreateTask"; // FIXED: corrected case
 
         // GET: CreateTask
@@ -1125,7 +1162,7 @@ namespace Talent_Hunt.Controllers
                     userId = Convert.ToInt32(Session["UserId"]);
                 }
 
-                using (var db = new Talent_HuntEntities3())
+                using (var db = new Talent_HuntEntities4())
                 {
                     // 👇 Look up CommitteeMemberId from Users table
                     var committeeMember = db.CommitteeMember.FirstOrDefault(cm => cm.UserID == userId);
@@ -1192,7 +1229,7 @@ namespace Talent_Hunt.Controllers
         [HttpGet]
         public ActionResult ViewSubmissionsforcompare(int taskId, int currentSubmissionId)
         {
-            using (var db = new Talent_HuntEntities3())
+            using (var db = new Talent_HuntEntities4())
             {
                 var submissions = db.Submission
                                     .Where(s => s.TaskID == taskId && s.Id != currentSubmissionId) // exclude current submission
@@ -1209,7 +1246,7 @@ namespace Talent_Hunt.Controllers
         [HttpGet]
         public ActionResult CompareTwoSubmissions(int id1, int id2)
         {
-            using (var db = new Talent_HuntEntities3())
+            using (var db = new Talent_HuntEntities4())
             {
                 var sub1 = db.Submission.FirstOrDefault(s => s.Id == id1);
                 var sub2 = db.Submission.FirstOrDefault(s => s.Id == id2);
@@ -1870,7 +1907,7 @@ namespace Talent_Hunt.Controllers
         [HttpGet]
         public ActionResult CompareSubmissions(int selectedSubmissionId)
         {
-            using (var db = new Talent_HuntEntities3())
+            using (var db = new Talent_HuntEntities4())
             {
                 // Left: selected submission
                 var selectedSubmission = (from s in db.Submission

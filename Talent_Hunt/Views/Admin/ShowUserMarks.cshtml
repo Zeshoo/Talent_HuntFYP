@@ -1,0 +1,36 @@
+﻿@model List<Talent_Hunt.Models.UserTaskMarksViewModel>
+
+@{
+    ViewBag.Title = "User Task Marks by Committee Members";
+}
+
+<h3 class="text-primary mb-3">Marks Given by Committee Members</h3>
+
+@if (!Model.Any())
+{
+    <div class="alert alert-warning">No marks greater than 0 found for this user.</div>
+}
+else
+{
+    <table class="table table-bordered table-striped shadow rounded-4">
+        <thead class="table-dark">
+            <tr>
+                <th>Task ID</th>
+                <th>Description</th>
+                <th>Committee Member</th>
+                <th>Marks</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>@item.TaskId</td>
+                    <td>@item.TaskDescription</td>
+                    <td>@item.CommitteeMemberName (@item.CommitteeMemberId)</td>
+                    <td>@item.HighestMark</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}

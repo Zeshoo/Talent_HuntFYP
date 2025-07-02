@@ -13,10 +13,10 @@ namespace Talent_Hunt.Models
     using System.Data.Entity;
     using System.Data.Entity.Infrastructure;
     
-    public partial class Talent_HuntEntities3 : DbContext
+    public partial class Talent_HuntEntities4 : DbContext
     {
-        public Talent_HuntEntities3()
-            : base("name=Talent_HuntEntities3")
+        public Talent_HuntEntities4()
+            : base("name=Talent_HuntEntities4")
         {
         }
     

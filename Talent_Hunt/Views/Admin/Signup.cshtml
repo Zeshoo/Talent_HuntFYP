@@ -3,41 +3,59 @@
     ViewBag.Title = "Sign Up";
 }
 
-<h2 class="text-center mb-4">Create an Account</h2>
+<div class="container mt-5" style="max-width: 500px;">
+    <div class="card shadow rounded">
+        <div class="card-body">
+            <h2 class="text-center mb-4 text-primary">Create an Account</h2>
 
-@using (Html.BeginForm("Signup", "Admin", FormMethod.Post))
-{
-    <div class="form-group">
-        @Html.LabelFor(m => m.Name)
-        @Html.TextBoxFor(m => m.Name, new { @class = "form-control", placeholder = "Full Name" })
-        @Html.ValidationMessageFor(m => m.Name)
+            @using (Html.BeginForm("Signup", "Admin", FormMethod.Post))
+            {
+                <div class="form-group mb-3">
+                    @Html.LabelFor(m => m.Name, new { @class = "form-label fw-bold" })
+                    @Html.TextBoxFor(m => m.Name, new { @class = "form-control", placeholder = "Full Name" })
+                    @Html.ValidationMessageFor(m => m.Name, "", new { @class = "text-danger" })
+                </div>
+
+                <div class="form-group mb-3">
+                    @Html.LabelFor(m => m.Email, new { @class = "form-label fw-bold" })
+                    @Html.TextBoxFor(m => m.Email, new { @class = "form-control", placeholder = "Email Address" })
+                    @Html.ValidationMessageFor(m => m.Email, "", new { @class = "text-danger" })
+                </div>
+
+                <div class="form-group mb-3">
+                    @Html.LabelFor(m => m.Password, new { @class = "form-label fw-bold" })
+                    @Html.PasswordFor(m => m.Password, new { @class = "form-control", placeholder = "Password" })
+                    @Html.ValidationMessageFor(m => m.Password, "", new { @class = "text-danger" })
+                </div>
+
+                <div class="form-group mb-4">
+                    <label class="form-label fw-bold">Role</label><br />
+                    <div class="form-check form-check-inline">
+                        <input class="form-check-input" type="radio" name="Role" id="roleStudent" value="Student" required />
+                        <label class="form-check-label" for="roleStudent">Student</label>
+                    </div>
+                    <div class="form-check form-check-inline">
+                        <input class="form-check-input" type="radio" name="Role" id="roleAdmin" value="Admin" required />
+                        <label class="form-check-label" for="roleAdmin">Admin</label>
+                    </div>
+                </div>
+
+                <button type="submit" class="btn btn-primary w-100">Sign Up</button>
+            }
+
+            @if (ViewBag.Message != null)
+            {
+                <div class="alert alert-info mt-3 text-center">
+                    @ViewBag.Message
+                </div>
+            }
+
+            @if (ViewBag.ErrorMessage != null)
+            {
+                <div class="alert alert-danger mt-3 text-center">
+                    @ViewBag.ErrorMessage
+                </div>
+            }
+        </div>
     </div>
-
-    <div class="form-group">
-        @Html.LabelFor(m => m.Email)
-        @Html.TextBoxFor(m => m.Email, new { @class = "form-control", placeholder = "Email Address" })
-        @Html.ValidationMessageFor(m => m.Email)
-    </div>
-
-    <div class="form-group">
-        @Html.LabelFor(m => m.Password)
-        @Html.PasswordFor(m => m.Password, new { @class = "form-control", placeholder = "Password" })
-        @Html.ValidationMessageFor(m => m.Password)
-    </div>
-
-    <button type="submit" class="btn btn-primary btn-block">Sign Up</button>
-}
-
-@if (ViewBag.Message != null)
-{
-    <div class="alert alert-info mt-3">
-        @ViewBag.Message
-    </div>
-}
-
-@if (ViewBag.ErrorMessage != null)
-{
-    <div class="alert alert-danger mt-3">
-        @ViewBag.ErrorMessage
-    </div>
-}
+</div>
