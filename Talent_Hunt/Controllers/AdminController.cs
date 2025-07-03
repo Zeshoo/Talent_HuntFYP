@@ -316,8 +316,9 @@ namespace Talent_Hunt.Controllers
 
                     if (response.IsSuccessStatusCode)
                     {
-                        var data = response.Content.ReadAsStringAsync().Result;
-                        marksList = JsonConvert.DeserializeObject<List<UserEventMarksViewModel>>(data);
+                        var json = response.Content.ReadAsStringAsync().Result;
+                        marksList = JsonConvert.DeserializeObject<List<UserEventMarksViewModel>>(json);
+                        ViewBag.UserId = userId;
                     }
                     else
                     {
@@ -330,37 +331,36 @@ namespace Talent_Hunt.Controllers
                 ViewBag.Error = "Something went wrong: " + ex.Message;
             }
 
-            return View(marksList); // returns normal view
+            return View(marksList);
         }
 
         public ActionResult ShowUserMarks(int userId, int eventId)
         {
             using (var db = new Talent_HuntEntities4())
             {
-                var ma = (from e in db.Event
-                             join t in db.Task on e.Id equals t.EventID
-                             join s in db.Submission on t.Id equals  s.TaskID
-                             join m in db.Marks on s.Id equals m.SubmissionID
-                             where t.EventID == eventId
-                                   && s.UserID == userId
-                                   
-                             group new { e, t, s, m } by new
-                             {
-                                 TaskId = t.Id,
-                                 t.Description,
-                                 CommitteeMemberId = m.CommitteeMemberID
-                                 
-                             } into g
-                             select new UserTaskMarksViewModel
-                             {
-                                 TaskId = g.Key.TaskId,
-                                 TaskDescription = g.Key.Description,
-                                 
-                                 
-                                 HighestMark = g.Max(x => x.m.Marks1)
-                             }).ToList();
+                var result = (from e in db.Event
+                              join t in db.Task on e.Id equals t.EventID
+                              join s in db.Submission on t.Id equals s.TaskID
+                              join m in db.Marks on s.Id equals m.SubmissionID
+                              join cm in db.CommitteeMember on m.CommitteeMemberID equals cm.Id
+                              where e.Id == eventId && s.UserID == userId
+                              group new { t, cm, m } by new
+                              {
+                                  TaskId = t.Id,
+                                  TaskDescription = t.Description,
+                                  CommitteeMemberId = cm.Id,
+                                  CommitteeMemberName = cm.Name
+                              } into g
+                              select new UserTaskMarksViewModel
+                              {
+                                  TaskId = g.Key.TaskId,
+                                  TaskDescription = g.Key.TaskDescription,
+                                  CommitteeMemberName = g.Key.CommitteeMemberName,
+                                  CommitteeMemberId = g.Key.CommitteeMemberId,
+                                  HighestMark = g.Max(x => x.m.Marks1) // or g.First().m.Marks
+                              }).ToList();
 
-                return View(ma);
+                return View(result);
             }
         }
 
