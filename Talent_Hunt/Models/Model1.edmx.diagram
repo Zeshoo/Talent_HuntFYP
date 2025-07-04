@@ -4,15 +4,16 @@
   <edmx:Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
     <!-- Diagram content (shape and connector positions) -->
     <edmx:Diagrams>
-      <Diagram DiagramId="0124367ebb1844358dfdd010c239da2d" Name="Diagram1">
+      <Diagram DiagramId="c7b3cb39929247d8ae0c9b2c24171e01" Name="Diagram1">
         <EntityTypeShape EntityType="Talent_HuntModel.Apply" Width="1.5" PointX="0.75" PointY="0.75" IsExpanded="true" />
         <EntityTypeShape EntityType="Talent_HuntModel.AssignedMember" Width="1.5" PointX="2.75" PointY="0.75" IsExpanded="true" />
         <EntityTypeShape EntityType="Talent_HuntModel.CommitteeMember" Width="1.5" PointX="0.75" PointY="3.75" IsExpanded="true" />
         <EntityTypeShape EntityType="Talent_HuntModel.Event" Width="1.5" PointX="2.75" PointY="3.75" IsExpanded="true" />
-        <EntityTypeShape EntityType="Talent_HuntModel.Marks" Width="1.5" PointX="4.75" PointY="0.75" IsExpanded="true" />
-        <EntityTypeShape EntityType="Talent_HuntModel.Submission" Width="1.5" PointX="4.75" PointY="3.75" IsExpanded="true" />
-        <EntityTypeShape EntityType="Talent_HuntModel.Task" Width="1.5" PointX="6.75" PointY="0.75" IsExpanded="true" />
-        <EntityTypeShape EntityType="Talent_HuntModel.Users" Width="1.5" PointX="6.75" PointY="3.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="Talent_HuntModel.EventReviews" Width="1.5" PointX="4.75" PointY="0.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="Talent_HuntModel.Marks" Width="1.5" PointX="4.75" PointY="3.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="Talent_HuntModel.Submission" Width="1.5" PointX="6.75" PointY="0.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="Talent_HuntModel.Task" Width="1.5" PointX="6.75" PointY="3.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="Talent_HuntModel.Users" Width="1.5" PointX="4.75" PointY="6.75" IsExpanded="true" />
       </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>

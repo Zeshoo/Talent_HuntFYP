@@ -1,7 +1,53 @@
 ﻿@model List<Talent_Hunt.Models.UserTaskMarksViewModel>
 
+    @{
+        ViewBag.Title = "User Task Marks by Committee Members";
+    }
+
+    <h3 class="text-primary mb-3">Marks Given by Committee Members</h3>
+
+    @if (!Model.Any())
+    {
+        <div class="alert alert-warning">No marks greater than 0 found for this user.</div>
+    }
+    else
+    {
+        <table class="table table-bordered table-striped shadow rounded-4">
+            <thead class="table-dark">
+                <tr>
+                    <th>Task ID</th>
+                    <th>Description</th>
+                    <th>Committee Member</th>
+                    <th>Marks</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model)
+                {
+                    <tr>
+                        <td>@item.TaskId</td>
+                        <td>@item.TaskDescription</td>
+                        <td>@item.CommitteeMemberName (@item.CommitteeMemberId)</td>
+                        <td>@item.HighestMark</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
+
+
+@*@model List<Talent_Hunt.Models.UserTaskMarksViewModel>
+
 @{
     ViewBag.Title = "User Task Marks by Committee Members";
+
+    int eventId = Model.FirstOrDefault()?.TaskId ?? 0;
+    int studentId = Convert.ToInt32(Session["UserId"]);
+
+    var uniqueMembers = Model
+        .GroupBy(m => new { m.CommitteeMemberId, m.CommitteeMemberName })
+        .Select(g => g.Key)
+        .ToList();
 }
 
 <h3 class="text-primary mb-3">Marks Given by Committee Members</h3>
@@ -33,4 +79,99 @@ else
             }
         </tbody>
     </table>
+
+    <h4 class="mt-5 mb-3">Rate Committee Members</h4>
+
+    <form id="ratingForm">
+        @foreach (var member in uniqueMembers)
+        {
+            <div class="mb-3 border rounded p-3">
+                <strong>@member.CommitteeMemberName (@member.CommitteeMemberId)</strong><br />
+                <div class="star-rating" data-member="@member.CommitteeMemberId">
+                    @for (int i = 1; i <= 5; i++)
+                    {
+                        <span class="star" data-value="@i">&#9733;</span>
+                    }
+                    <input type="hidden" class="rating-value" />
+                </div>
+            </div>
+        }
+
+        <button type="submit" class="btn btn-success mt-3">Save Ratings</button>
+    </form>
 }
+
+@section Scripts {
+    <script>
+        $(document).ready(function () {
+            $(".star").click(function () {
+                var value = $(this).data("value");
+                var container = $(this).closest(".star-rating");
+
+                container.find(".star").each(function (index) {
+                    if (index < value) {
+                        $(this).css("color", "gold");
+                    } else {
+                        $(this).css("color", "gray");
+                    }
+                });
+
+                container.find(".rating-value").val(value);
+            });
+
+            $("#ratingForm").submit(function (e) {
+                e.preventDefault();
+
+                var eventId = @eventId;
+                var studentId = @studentId;
+                var ratings = [];
+
+                $(".star-rating").each(function () {
+                    var memberId = $(this).data("member");
+                    var rating = $(this).find(".rating-value").val();
+
+                    if (rating) {
+                        ratings.push({
+                            EventId: eventId,
+                            StudentId: studentId,
+                            MemberId: memberId,
+                            Review: parseInt(rating)
+                        });
+                    }
+                });
+
+                if (ratings.length === 0) {
+                    alert("Please rate at least one member.");
+                    return;
+                }
+
+                $.ajax({
+                    type: "POST",
+                    url: '@Url.Action("SaveCommitteeRatings", "Admin")', // Update controller name
+                    contentType: "application/json",
+                    data: JSON.stringify(ratings),
+                    success: function (res) {
+                        alert(res.message || "Ratings saved successfully!");
+                    },
+                    error: function () {
+                        alert("An error occurred while saving.");
+                    }
+                });
+            });
+        });
+    </script>
+
+    <style>
+        .star {
+            cursor: pointer;
+            color: gray;
+            font-size: 24px;
+        }
+
+            .star.selected,
+            .star:hover,
+            .star:hover ~ .star {
+                color: gold !important;
+            }
+    </style>
+}*@

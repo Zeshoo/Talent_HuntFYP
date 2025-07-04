@@ -21,7 +21,7 @@ namespace Talent_Hunt.Controllers
 {
     public class AdminController : Controller
     {
-        private Talent_HuntEntities4 db = new Talent_HuntEntities4();
+        private Talent_HuntEntities5 db = new Talent_HuntEntities5();
         private readonly string SignUpApi = "http://localhost/TalentHunt1/api/Main/Signup";
         private readonly string getUserApi = "http://localhost/TalentHunt1/api/Main/getUser";
         private static readonly HttpClient apiClient = new HttpClient();
@@ -336,7 +336,7 @@ namespace Talent_Hunt.Controllers
 
         public ActionResult ShowUserMarks(int userId, int eventId)
         {
-            using (var db = new Talent_HuntEntities4())
+            using (var db = new Talent_HuntEntities5())
             {
                 var result = (from e in db.Event
                               join t in db.Task on e.Id equals t.EventID
@@ -1162,7 +1162,7 @@ namespace Talent_Hunt.Controllers
                     userId = Convert.ToInt32(Session["UserId"]);
                 }
 
-                using (var db = new Talent_HuntEntities4())
+                using (var db = new Talent_HuntEntities5())
                 {
                     // 👇 Look up CommitteeMemberId from Users table
                     var committeeMember = db.CommitteeMember.FirstOrDefault(cm => cm.UserID == userId);
@@ -1229,7 +1229,7 @@ namespace Talent_Hunt.Controllers
         [HttpGet]
         public ActionResult ViewSubmissionsforcompare(int taskId, int currentSubmissionId)
         {
-            using (var db = new Talent_HuntEntities4())
+            using (var db = new Talent_HuntEntities5())
             {
                 var submissions = db.Submission
                                     .Where(s => s.TaskID == taskId && s.Id != currentSubmissionId) // exclude current submission
@@ -1246,7 +1246,7 @@ namespace Talent_Hunt.Controllers
         [HttpGet]
         public ActionResult CompareTwoSubmissions(int id1, int id2)
         {
-            using (var db = new Talent_HuntEntities4())
+            using (var db = new Talent_HuntEntities5())
             {
                 var sub1 = db.Submission.FirstOrDefault(s => s.Id == id1);
                 var sub2 = db.Submission.FirstOrDefault(s => s.Id == id2);
@@ -1907,7 +1907,7 @@ namespace Talent_Hunt.Controllers
         [HttpGet]
         public ActionResult CompareSubmissions(int selectedSubmissionId)
         {
-            using (var db = new Talent_HuntEntities4())
+            using (var db = new Talent_HuntEntities5())
             {
                 // Left: selected submission
                 var selectedSubmission = (from s in db.Submission
@@ -1940,6 +1940,42 @@ namespace Talent_Hunt.Controllers
                 return View("CompareSubmissions", model);
             }
         }
+        [HttpPost]
+        public JsonResult SaveCommitteeRatings( List<EventReviews> ratings)
+        {
+            using (var db = new Talent_HuntEntities5())
+            {
+                foreach (var r in ratings)
+                {
+                    // Optional: check if review already exists
+                    var existing = db.EventReviews.FirstOrDefault(x =>
+                        x.EventId == r.EventId &&
+                        x.MemberId == r.MemberId &&
+                        x.StudentId == r.StudentId);
+
+                    if (existing != null)
+                    {
+                        existing.Review = r.Review; // Update
+                    }
+                    else
+                    {
+                        db.EventReviews.Add(new EventReviews
+                        {
+                            EventId = r.EventId,
+                            MemberId = r.MemberId,
+                            StudentId = r.StudentId,
+                            Review = r.Review
+                        });
+                    }
+                }
+
+                db.SaveChanges();
+            }
+
+            return Json(new { success = true, message = "All ratings saved successfully!" });
+        }
+
+
 
     }
 

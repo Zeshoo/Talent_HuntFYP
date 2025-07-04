@@ -48,6 +48,16 @@
           <Property Name="Image" Type="varchar(max)" />
           <Property Name="CreatedByName" Type="nvarchar" MaxLength="100" />
         </EntityType>
+        <EntityType Name="EventReviews">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="EventId" Type="int" Nullable="false" />
+          <Property Name="MemberId" Type="int" Nullable="false" />
+          <Property Name="StudentId" Type="int" Nullable="false" />
+          <Property Name="Review" Type="int" />
+        </EntityType>
         <EntityType Name="Marks">
           <Key>
             <PropertyRef Name="Id" />
@@ -93,6 +103,7 @@
           <EntitySet Name="AssignedMember" EntityType="Self.AssignedMember" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="CommitteeMember" EntityType="Self.CommitteeMember" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Event" EntityType="Self.Event" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="EventReviews" EntityType="Self.EventReviews" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Marks" EntityType="Self.Marks" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Submission" EntityType="Self.Submission" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Task" EntityType="Self.Task" Schema="dbo" store:Type="Tables" />
@@ -146,6 +157,16 @@
           <Property Name="Image" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
           <Property Name="CreatedByName" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
         </EntityType>
+        <EntityType Name="EventReviews">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="EventId" Type="Int32" Nullable="false" />
+          <Property Name="MemberId" Type="Int32" Nullable="false" />
+          <Property Name="StudentId" Type="Int32" Nullable="false" />
+          <Property Name="Review" Type="Int32" />
+        </EntityType>
         <EntityType Name="Marks">
           <Key>
             <PropertyRef Name="Id" />
@@ -186,11 +207,12 @@
           <Property Name="Password" Type="String" MaxLength="20" FixedLength="false" Unicode="false" />
           <Property Name="Role" Type="String" MaxLength="20" FixedLength="false" Unicode="false" />
         </EntityType>
-        <EntityContainer Name="Talent_HuntEntities4" annotation:LazyLoadingEnabled="true">
+        <EntityContainer Name="Talent_HuntEntities5" annotation:LazyLoadingEnabled="true">
           <EntitySet Name="Apply" EntityType="Self.Apply" />
           <EntitySet Name="AssignedMember" EntityType="Self.AssignedMember" />
           <EntitySet Name="CommitteeMember" EntityType="Self.CommitteeMember" />
           <EntitySet Name="Event" EntityType="Self.Event" />
+          <EntitySet Name="EventReviews" EntityType="Self.EventReviews" />
           <EntitySet Name="Marks" EntityType="Self.Marks" />
           <EntitySet Name="Submission" EntityType="Self.Submission" />
           <EntitySet Name="Task" EntityType="Self.Task" />
@@ -201,7 +223,7 @@
     <!-- C-S mapping content -->
     <edmx:Mappings>
       <Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2009/11/mapping/cs">
-        <EntityContainerMapping StorageEntityContainer="Talent_HuntModelStoreContainer" CdmEntityContainer="Talent_HuntEntities4">
+        <EntityContainerMapping StorageEntityContainer="Talent_HuntModelStoreContainer" CdmEntityContainer="Talent_HuntEntities5">
           <EntitySetMapping Name="Apply">
             <EntityTypeMapping TypeName="Talent_HuntModel.Apply">
               <MappingFragment StoreEntitySet="Apply">
@@ -246,6 +268,17 @@
                 <ScalarProperty Name="Details" ColumnName="Details" />
                 <ScalarProperty Name="Image" ColumnName="Image" />
                 <ScalarProperty Name="CreatedByName" ColumnName="CreatedByName" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="EventReviews">
+            <EntityTypeMapping TypeName="Talent_HuntModel.EventReviews">
+              <MappingFragment StoreEntitySet="EventReviews">
+                <ScalarProperty Name="Id" ColumnName="Id" />
+                <ScalarProperty Name="EventId" ColumnName="EventId" />
+                <ScalarProperty Name="MemberId" ColumnName="MemberId" />
+                <ScalarProperty Name="StudentId" ColumnName="StudentId" />
+                <ScalarProperty Name="Review" ColumnName="Review" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
