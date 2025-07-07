@@ -21,7 +21,7 @@ namespace Talent_Hunt.Controllers
 {
     public class AdminController : Controller
     {
-        private Talent_HuntEntities5 db = new Talent_HuntEntities5();
+        private Talent_HuntEntities6 db = new Talent_HuntEntities6();
         private readonly string SignUpApi = "http://localhost/TalentHunt1/api/Main/Signup";
         private readonly string getUserApi = "http://localhost/TalentHunt1/api/Main/getUser";
         private static readonly HttpClient apiClient = new HttpClient();
@@ -336,7 +336,7 @@ namespace Talent_Hunt.Controllers
 
         public ActionResult ShowUserMarks(int userId, int eventId)
         {
-            using (var db = new Talent_HuntEntities5())
+            using (var db = new Talent_HuntEntities6())
             {
                 var result = (from e in db.Event
                               join t in db.Task on e.Id equals t.EventID
@@ -1162,7 +1162,7 @@ namespace Talent_Hunt.Controllers
                     userId = Convert.ToInt32(Session["UserId"]);
                 }
 
-                using (var db = new Talent_HuntEntities5())
+                using (var db = new Talent_HuntEntities6())
                 {
                     // 👇 Look up CommitteeMemberId from Users table
                     var committeeMember = db.CommitteeMember.FirstOrDefault(cm => cm.UserID == userId);
@@ -1229,7 +1229,7 @@ namespace Talent_Hunt.Controllers
         [HttpGet]
         public ActionResult ViewSubmissionsforcompare(int taskId, int currentSubmissionId)
         {
-            using (var db = new Talent_HuntEntities5())
+            using (var db = new Talent_HuntEntities6())
             {
                 var submissions = db.Submission
                                     .Where(s => s.TaskID == taskId && s.Id != currentSubmissionId) // exclude current submission
@@ -1246,7 +1246,7 @@ namespace Talent_Hunt.Controllers
         [HttpGet]
         public ActionResult CompareTwoSubmissions(int id1, int id2)
         {
-            using (var db = new Talent_HuntEntities5())
+            using (var db = new Talent_HuntEntities6())
             {
                 var sub1 = db.Submission.FirstOrDefault(s => s.Id == id1);
                 var sub2 = db.Submission.FirstOrDefault(s => s.Id == id2);
@@ -1290,7 +1290,7 @@ namespace Talent_Hunt.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> Marks(int SubmissionId, int CommitteeMemberId, int Marks)
+        public async Task<ActionResult> Marks(int SubmissionId, int CommitteeMemberId, int Marks)//string feedback
         {
             var userIdObj = Session["UserId"];
             if (userIdObj == null)
@@ -1302,7 +1302,7 @@ namespace Talent_Hunt.Controllers
                 {
                     client.BaseAddress = new Uri("http://localhost/TalentHunt1/");
 
-                    var url = $"api/Main/AddMarks?SubmissionID={SubmissionId}&CommitteeMemberID={CommitteeMemberId}&Marks={Marks}";
+                    var url = $"api/Main/AddMarks?SubmissionID={SubmissionId}&CommitteeMemberID={CommitteeMemberId}&Marks={Marks}";//&feedback={feedback}
 
                     var response = await client.PostAsync(url, null);
 
@@ -1907,7 +1907,7 @@ namespace Talent_Hunt.Controllers
         [HttpGet]
         public ActionResult CompareSubmissions(int selectedSubmissionId)
         {
-            using (var db = new Talent_HuntEntities5())
+            using (var db = new Talent_HuntEntities6())
             {
                 // Left: selected submission
                 var selectedSubmission = (from s in db.Submission
@@ -1943,7 +1943,7 @@ namespace Talent_Hunt.Controllers
         [HttpPost]
         public JsonResult SaveCommitteeRatings( List<EventReviews> ratings)
         {
-            using (var db = new Talent_HuntEntities5())
+            using (var db = new Talent_HuntEntities6())
             {
                 foreach (var r in ratings)
                 {

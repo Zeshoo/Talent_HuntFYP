@@ -66,6 +66,7 @@
           <Property Name="SubmissionID" Type="int" />
           <Property Name="CommitteeMemberID" Type="int" />
           <Property Name="Marks" Type="int" />
+          <Property Name="Feedback" Type="nvarchar(max)" />
         </EntityType>
         <EntityType Name="Submission">
           <Key>
@@ -175,6 +176,7 @@
           <Property Name="SubmissionID" Type="Int32" />
           <Property Name="CommitteeMemberID" Type="Int32" />
           <Property Name="Marks1" Type="Int32" />
+          <Property Name="Feedback" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
         </EntityType>
         <EntityType Name="Submission">
           <Key>
@@ -207,7 +209,7 @@
           <Property Name="Password" Type="String" MaxLength="20" FixedLength="false" Unicode="false" />
           <Property Name="Role" Type="String" MaxLength="20" FixedLength="false" Unicode="false" />
         </EntityType>
-        <EntityContainer Name="Talent_HuntEntities5" annotation:LazyLoadingEnabled="true">
+        <EntityContainer Name="Talent_HuntEntities6" annotation:LazyLoadingEnabled="true">
           <EntitySet Name="Apply" EntityType="Self.Apply" />
           <EntitySet Name="AssignedMember" EntityType="Self.AssignedMember" />
           <EntitySet Name="CommitteeMember" EntityType="Self.CommitteeMember" />
@@ -223,7 +225,7 @@
     <!-- C-S mapping content -->
     <edmx:Mappings>
       <Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2009/11/mapping/cs">
-        <EntityContainerMapping StorageEntityContainer="Talent_HuntModelStoreContainer" CdmEntityContainer="Talent_HuntEntities5">
+        <EntityContainerMapping StorageEntityContainer="Talent_HuntModelStoreContainer" CdmEntityContainer="Talent_HuntEntities6">
           <EntitySetMapping Name="Apply">
             <EntityTypeMapping TypeName="Talent_HuntModel.Apply">
               <MappingFragment StoreEntitySet="Apply">
@@ -289,6 +291,7 @@
                 <ScalarProperty Name="SubmissionID" ColumnName="SubmissionID" />
                 <ScalarProperty Name="CommitteeMemberID" ColumnName="CommitteeMemberID" />
                 <ScalarProperty Name="Marks1" ColumnName="Marks" />
+                <ScalarProperty Name="Feedback" ColumnName="Feedback" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>

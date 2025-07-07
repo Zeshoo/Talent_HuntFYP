@@ -69,3 +69,13 @@ CREATE TABLE Marks (
     Marks INT
     
 );
+
+CREATE TABLE EventReviews (
+    Id INT IDENTITY(1,1) PRIMARY KEY,
+    EventId INT NOT NULL,
+    MemberId INT NOT NULL,
+    StudentId INT NOT NULL,
+    Review INT -- Numeric review value (e.g., 1 to 10)
+);
+
+select * from users

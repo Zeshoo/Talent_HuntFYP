@@ -18,5 +18,6 @@ namespace Talent_Hunt.Models
         public Nullable<int> SubmissionID { get; set; }
         public Nullable<int> CommitteeMemberID { get; set; }
         public Nullable<int> Marks1 { get; set; }
+        public string Feedback { get; set; }
     }
 }

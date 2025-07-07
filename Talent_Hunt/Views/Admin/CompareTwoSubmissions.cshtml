@@ -42,13 +42,13 @@
                 </select>
             </div>
 
-            @* Comment Section Disabled *@
-            @*
-                <div class="form-group">
+            @*// Comment Section Disabled*@ 
+            
+                @*<div class="form-group">
                     <label for="Comment1">Comment:</label>
                     <textarea name="Comment1" id="Comment1" class="form-control mb-3" rows="3" placeholder="Write your feedback here..."></textarea>
-                </div>
-            *@
+                </div>*@
+            
 
             <input type="hidden" name="SubmissionId1" id="SubmissionId1" value="@(Model.Submission1?.Id ?? 0)" />
         </div>
@@ -82,12 +82,12 @@
             </div>
 
             @* Comment Section Disabled *@
-            @*
-                <div class="form-group">
+            
+                @*<div class="form-group">
                     <label for="Comment2">Comment:</label>
                     <textarea name="Comment2" id="Comment2" class="form-control mb-3" rows="3" placeholder="Write your feedback here..."></textarea>
-                </div>
-            *@
+                </div>*@
+            
 
             <input type="hidden" name="SubmissionId2" id="SubmissionId2" value="@(Model.Submission2?.Id ?? 0)" />
         </div>
@@ -112,7 +112,7 @@
             SubmissionId: document.getElementById("SubmissionId1").value,
             CommitteeMemberId: committeeMemberId,
             Marks: document.getElementById("Marks1").value,
-            Comment: "", // Comment removed
+            //Feedback: document.getElementById("Comment1").value, // ✅ fixed
             __RequestVerificationToken: token
         };
 
@@ -120,7 +120,7 @@
             SubmissionId: document.getElementById("SubmissionId2").value,
             CommitteeMemberId: committeeMemberId,
             Marks: document.getElementById("Marks2").value,
-            Comment: "", // Comment removed
+            //Feedback: document.getElementById("Comment2").value, // ✅ fixed
             __RequestVerificationToken: token
         };
 
