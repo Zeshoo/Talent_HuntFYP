@@ -1,0 +1,29 @@
+﻿@model Talent_Hunt.Models.EventTaskMarksResponse
+
+<h2 class="text-primary">Event: @Model.EventTitle</h2>
+
+@foreach (var task in Model.Tasks)
+{
+    <div class="card mb-3 p-3">
+        <h5>Task: @task.TaskDescription</h5>
+        <table class="table table-bordered">
+            <thead>
+                <tr>
+                    <th>Committee Member</th>
+                    <th>Marks</th>
+                    @*<th>Feedback</th>*@
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var cm in task.CommitteeMarks)
+                {
+                    <tr>
+                        <td>@cm.CommitteeMemberName</td>
+                        <td>@cm.LatestMarks</td>
+                        @*<td>@cm.Feedback</td>*@
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+}

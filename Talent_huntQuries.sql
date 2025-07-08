@@ -78,4 +78,6 @@ CREATE TABLE EventReviews (
     Review INT -- Numeric review value (e.g., 1 to 10)
 );
 
-select * from users
+select * from Marks
+ALTER TABLE Marks
+ADD Feedback NVARCHAR(MAX);

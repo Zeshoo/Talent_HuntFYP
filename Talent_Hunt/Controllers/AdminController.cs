@@ -334,35 +334,28 @@ namespace Talent_Hunt.Controllers
             return View(marksList);
         }
 
-        public ActionResult ShowUserMarks(int userId, int eventId)
-        {
-            using (var db = new Talent_HuntEntities6())
-            {
-                var result = (from e in db.Event
-                              join t in db.Task on e.Id equals t.EventID
-                              join s in db.Submission on t.Id equals s.TaskID
-                              join m in db.Marks on s.Id equals m.SubmissionID
-                              join cm in db.CommitteeMember on m.CommitteeMemberID equals cm.Id
-                              where e.Id == eventId && s.UserID == userId
-                              group new { t, cm, m } by new
-                              {
-                                  TaskId = t.Id,
-                                  TaskDescription = t.Description,
-                                  CommitteeMemberId = cm.Id,
-                                  CommitteeMemberName = cm.Name
-                              } into g
-                              select new UserTaskMarksViewModel
-                              {
-                                  TaskId = g.Key.TaskId,
-                                  TaskDescription = g.Key.TaskDescription,
-                                  CommitteeMemberName = g.Key.CommitteeMemberName,
-                                  CommitteeMemberId = g.Key.CommitteeMemberId,
-                                  HighestMark = g.Max(x => x.m.Marks1) // or g.First().m.Marks
-                              }).ToList();
 
-                return View(result);
+        public async Task<ActionResult> ShowUserEventMarks(int userId, int eventId)
+        {
+            using (HttpClient client = new HttpClient())
+            {
+                client.BaseAddress = new Uri("http://localhost/TalentHunt1/api/"); // Adjust as needed
+
+                HttpResponseMessage response = await client.GetAsync($"Main/GetUserEventMarks?userId={userId}&eventId={eventId}");
+
+                if (response.IsSuccessStatusCode)
+                {
+                    var json = await response.Content.ReadAsStringAsync();
+                    var result = JsonConvert.DeserializeObject<EventTaskMarksResponse>(json);
+                    return View(result);
+                }
+
+                TempData["Error"] = "Marks data not found or user not registered.";
+                return RedirectToAction("Index"); // Or redirect to error page
             }
         }
+
+
 
 
 

@@ -20,7 +20,7 @@ else
         @foreach (var item in Model)
         {
             <div class="col-md-6 mb-4">
-                <a href="@Url.Action("ShowUserMarks", "Admin", new { userId = ViewBag.UserId, eventId = item.EventId })" style="text-decoration: none; color: inherit;">
+                <a href="@Url.Action("ShowUserEventMarks", "Admin", new { userId = ViewBag.UserId, eventId = item.EventId })" style="text-decoration: none; color: inherit;">
                     <div class="card shadow-sm rounded-4 h-100">
                         <img src="@($"http://localhost/TalentHunt1/Images/{item.EventPic ?? "default.png"}")"
                              class="card-img-top"
