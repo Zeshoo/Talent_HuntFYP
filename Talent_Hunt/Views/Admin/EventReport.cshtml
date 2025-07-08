@@ -63,40 +63,75 @@
     </div>*@
 @model Talent_Hunt.Models.EventReportViewModel
 
-<h2>@Model.Title - Event Report</h2>
-<p><strong>Date:</strong> @Model.EventDate.ToShortDateString()</p>
-<p><strong>Participants:</strong> @Model.ParticipantCount</p>
+<div class="container mt-4">
+    <div class="card shadow-lg border-0 rounded-4">
+        <div class="card-header bg-primary text-white rounded-top-4">
+            <h3 class="mb-0">@Model.Title - Event Report</h3>
+            <p class="mb-0">📅 @Model.EventDate.ToShortDateString() | 👥 Participants: @Model.ParticipantCount</p>
+        </div>
 
-<table class="table table-bordered mt-4">
-    <thead class="table-dark">
-        <tr>
-            <th>#</th>
-            <th>Student Name</th>
-            <th>Evaluators</th>
-            <th>Avg. Marks</th>
-            <th>Submission Time</th>
-        </tr>
-    </thead>
-    <tbody>
-        @for (int i = 0; i < Model.Submissions.Count; i++)
-        {
-            var submission = Model.Submissions[i];
-            <tr>
-                <td>@(i + 1)</td>
+        <div class="card-body bg-light rounded-bottom-4">
+            <table class="table table-hover table-bordered">
+                <thead class="table-dark text-center">
+                    <tr>
+                        <th>#</th>
+                        <th>👨‍🎓 Student Name</th>
+                        <th>🧑‍⚖️ Evaluators</th>
+                        <th>📊 Avg. Marks</th>
+                        <th>⏰ Submission Time</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @for (int i = 0; i < Model.Submissions.Count; i++)
+                    {
+                        var sub = Model.Submissions[i];
+                        <tr class="table-row-clickable text-center fw-semibold"
+                            style="cursor: pointer; background-color: #f9f9f9;"
+                            onclick="location.href='@Url.Action("GetUserMarks", "Admin", new { userId = sub.StudentId })'">
+                            <td>@(i + 1)</td>
+                            <td>@sub.StudentName</td>
+                            <td>@sub.CommitteeEvaluators</td>
+                            <td>@sub.AverageMarks.ToString("0.00")</td>
+                            <td>@sub.SubmissionTime.ToString("g")</td>
+                        </tr>
 
-                <!-- ✅ Make student name clickable -->
-                <td>
-                    <a href="@Url.Action("GetUserMarks", "Admin", new { userId = submission.StudentId })">
-                        @submission.StudentName
-                    </a>
-                </td>
+                        <!-- Task-Level Details -->
+                        <tr>
+                            <td colspan="5" class="p-0">
+                                <table class="table table-sm table-striped mb-0">
+                                    <thead class="table-secondary">
+                                        <tr class="text-center">
+                                            <th>📌 Task</th>
+                                            <th>🧑‍💼 Committee Member</th>
+                                            <th>⭐ Marks</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @foreach (var task in sub.TaskMarks)
+                                        {
+                                            foreach (var mark in task.CommitteeMarks)
+                                            {
+                                                <tr class="text-center">
+                                                    <td>@task.TaskDescription</td>
+                                                    <td>@mark.CommitteeMemberName</td>
+                                                    <td>@mark.Marks</td>
+                                                </tr>
+                                            }
+                                        }
+                                    </tbody>
+                                </table>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
 
-                <td>@submission.CommitteeEvaluators</td>
-                <td>@submission.AverageMarks</td>
-                <td>@submission.SubmissionTime.ToString("g")</td>
-            </tr>
-        }
-    </tbody>
-</table>
-
-
+<style>
+    .table-row-clickable:hover {
+        background-color: #d6eaff !important;
+        transition: background-color 0.3s;
+    }
+</style>

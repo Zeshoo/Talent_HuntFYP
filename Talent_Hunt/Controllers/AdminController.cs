@@ -956,25 +956,20 @@ namespace Talent_Hunt.Controllers
             using (var client = new HttpClient())
             {
                 client.BaseAddress = new Uri("http://localhost/TalentHunt1/");
-
                 HttpResponseMessage response = await client.GetAsync($"api/Main/GenerateEventReport?eventId={eventId}");
 
                 if (response.IsSuccessStatusCode)
                 {
                     var jsonString = await response.Content.ReadAsStringAsync();
-
-                    // Deserialize into a ViewModel that matches the structure of the API result
                     var eventReport = JsonConvert.DeserializeObject<EventReportViewModel>(jsonString);
-
                     return View(eventReport);
                 }
-                else
-                {
-                    ViewBag.Error = "Failed to load report.";
-                    return View(new EventReportViewModel()); // return an empty view model
-                }
+
+                ViewBag.Error = "Failed to load report.";
+                return View(new EventReportViewModel());
             }
         }
+
         // GET: User/GetUserMarks/12
         public ActionResult GetUserMarks(int userId)
         {
@@ -1203,7 +1198,7 @@ namespace Talent_Hunt.Controllers
                     {
                         Id = submissionData.Id,
                         TaskID = submissionData.TaskID ?? 0,
-                        UserID = submissionData.UserID ?? 0,
+                        UserID = submissionData.UserID?.ToString(), // ✅ fix applied
                         UserName = submissionData.UserName,
                         SubmissionTime = submissionTimeParsed,
                         PathofSubmission = submissionData.PathofSubmission,
@@ -1968,6 +1963,33 @@ namespace Talent_Hunt.Controllers
             return Json(new { success = true, message = "All ratings saved successfully!" });
         }
 
+        public async Task<ActionResult> ViewStudentTaskMarks(int taskid, int studentid)
+        {
+            List<CommitteeMarkDetailDto> marks = new List<CommitteeMarkDetailDto>();
+
+            using (var client = new HttpClient())
+            {
+                client.BaseAddress = new Uri("http://localhost/TalentHunt1/api/"); // Adjust your base URL
+
+                var response = await client.GetAsync($"Main/GetMarksOneByOne?taskid={taskid}&studentid={studentid}");
+
+                if (response.IsSuccessStatusCode)
+                {
+                    var jsonString = await response.Content.ReadAsStringAsync();
+                    marks = JsonConvert.DeserializeObject<List<CommitteeMarkDetailDto>>(jsonString);
+                }
+                else if (response.StatusCode == HttpStatusCode.NotFound)
+                {
+                    ViewBag.Message = "No marks found for this student in this task.";
+                }
+                else
+                {
+                    ViewBag.Message = "Error occurred while fetching data.";
+                }
+            }
+
+            return View(marks);
+        }
 
 
     }

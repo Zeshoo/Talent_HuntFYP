@@ -1,29 +1,38 @@
 ﻿@model Talent_Hunt.Models.EventTaskMarksResponse
-
-<h2 class="text-primary">Event: @Model.EventTitle</h2>
-
-@foreach (var task in Model.Tasks)
-{
-    <div class="card mb-3 p-3">
-        <h5>Task: @task.TaskDescription</h5>
-        <table class="table table-bordered">
-            <thead>
-                <tr>
-                    <th>Committee Member</th>
-                    <th>Marks</th>
-                    @*<th>Feedback</th>*@
-                </tr>
-            </thead>
-            <tbody>
-                @foreach (var cm in task.CommitteeMarks)
-                {
-                    <tr>
-                        <td>@cm.CommitteeMemberName</td>
-                        <td>@cm.LatestMarks</td>
-                        @*<td>@cm.Feedback</td>*@
-                    </tr>
-                }
-            </tbody>
-        </table>
-    </div>
+@{
+    ViewBag.Title = "Event Tasks";
+    var studentId = Session["UserId"] != null ? Convert.ToInt32(Session["UserId"]) : 0;
 }
+
+<h2 class="text-primary mb-4">🎯 Event: @Model.EventTitle</h2>
+
+<div class="row">
+    @foreach (var task in Model.Tasks)
+    {
+        <div class="col-md-6 col-lg-4 mb-4">
+            <a href="@Url.Action("ViewStudentTaskMarks", "Admin", new { taskId = task.TaskId, studentid = studentId })"
+               class="text-decoration-none">
+                <div class="card border-0 shadow-lg h-100 transition hover-scale">
+                    <div class="card-body">
+                        <h5 class="card-title text-primary">
+                            <i class="bi bi-list-task"></i> Task: <strong>@task.TaskDescription</strong>
+                        </h5>
+                        <p class="card-text text-secondary mb-1">
+                            📌 Task ID: <span class="text-dark">@task.TaskId</span>
+                        </p>
+                        <p class="mt-3 mb-0">
+                            <span class="badge bg-gradient-primary">📊 Click to View Your Marks</span>
+                        </p>
+                    </div>
+                </div>
+            </a>
+        </div>
+    }
+</div>
+
+<style>
+    .hover-scale:hover {
+        transform: scale(1.02);
+        transition: transform 0.2s ease-in-out;
+    }
+</style>

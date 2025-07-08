@@ -1,0 +1,38 @@
+﻿@model List<Talent_Hunt.Models.CommitteeMarkDetailDto>
+
+@{
+    ViewBag.Title = "Marks Given by Committee Members";
+}
+
+<h2 class="text-primary">Marks by Committee Members</h2>
+
+@if (ViewBag.Message != null)
+{
+    <div class="alert alert-warning">@ViewBag.Message</div>
+}
+else if (Model != null && Model.Any())
+{
+    <table class="table table-bordered">
+        <thead class="table-dark">
+            <tr>
+                <th>Committee Member</th>
+                <th>Mark</th>
+                @*<th>Feedback</th>*@
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var mark in Model)
+            {
+                <tr>
+                    <td>@mark.CommitteeMemberName</td>
+                    <td>@mark.Mark</td>
+                    @*<td>@mark.Feedback</td>*@
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+else
+{
+    <p>No data available.</p>
+}
