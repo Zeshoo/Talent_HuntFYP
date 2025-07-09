@@ -1278,7 +1278,7 @@ namespace Talent_Hunt.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> Marks(int SubmissionId, int CommitteeMemberId, int Marks)//string feedback
+        public async Task<ActionResult> Marks(int SubmissionId, int CommitteeMemberId, int Marks,string feedback)
         {
             var userIdObj = Session["UserId"];
             if (userIdObj == null)
@@ -1290,7 +1290,7 @@ namespace Talent_Hunt.Controllers
                 {
                     client.BaseAddress = new Uri("http://localhost/TalentHunt1/");
 
-                    var url = $"api/Main/AddMarks?SubmissionID={SubmissionId}&CommitteeMemberID={CommitteeMemberId}&Marks={Marks}";//&feedback={feedback}
+                    var url = $"api/Main/AddMarks?SubmissionID={SubmissionId}&CommitteeMemberID={CommitteeMemberId}&Marks={Marks}&feedback={feedback}";
 
                     var response = await client.PostAsync(url, null);
 
@@ -1704,7 +1704,29 @@ namespace Talent_Hunt.Controllers
                 return View(new List<CommitteeMember>());
             }
         }
-        
+        public ActionResult GetMemberRatings(int memberId)
+        {
+            using (var db = new Talent_HuntEntities6())
+            {
+                var ratings = (from review in db.EventReviews
+                               join student in db.Users on review.StudentId equals student.Id
+                               join task in db.Task on review.EventId equals task.Id
+                               where review.MemberId == memberId
+                               select new CommitteeMemberReviewDto
+                               {
+                                   StudentName = student.Name,
+                                   Review = review.Review.Value,
+                                   TaskDescription = task.Description
+                               }).ToList();
+
+                ViewBag.CommitteeMemberId = memberId;
+                ViewBag.MemberName = db.CommitteeMember.FirstOrDefault(m => m.Id == memberId)?.Name ?? "Unknown";
+
+                return View("CommitteeMemberRatings", ratings);
+            }
+        }
+
+
 
         private readonly string deletecommitteememberapi = "http://localhost/TalentHunt1/api/Main/DeleteCommitteeMember";
 
@@ -1929,7 +1951,85 @@ namespace Talent_Hunt.Controllers
             }
         }
         [HttpPost]
-        public JsonResult SaveCommitteeRatings( List<EventReviews> ratings)
+        public ActionResult SaveCommitteeRating(int TaskId, int StudentId, int MemberId, int Review)
+        {
+            using (var db = new Talent_HuntEntities6())
+            {
+                // Save or update the review
+                var existing = db.EventReviews.FirstOrDefault(x =>
+                    x.EventId == TaskId &&
+                    x.MemberId == MemberId &&
+                    x.StudentId == StudentId);
+
+                if (existing != null)
+                {
+                    existing.Review = Review;
+                }
+                else
+                {
+                    db.EventReviews.Add(new EventReviews
+                    {
+                        EventId = TaskId,
+                        MemberId = MemberId,
+                        StudentId = StudentId,
+                        Review = Review
+                    });
+                }
+
+                db.SaveChanges();
+
+                // Re-fetch the marks data for this task and student
+                var marks = (from m in db.Marks
+                             join cm in db.CommitteeMember on m.CommitteeMemberID equals cm.Id
+                             join s in db.Submission on m.SubmissionID equals s.Id
+                             where s.UserID == StudentId && s.TaskID == TaskId
+                             select new CommitteeMarkDetailDto
+                             {
+                                 CommitteeMemberId = cm.Id,
+                                 CommitteeMemberName = cm.Name,
+                                 Mark = m.Marks1,
+                                 Feedback = m.Feedback
+                             }).ToList();
+
+                ViewBag.Message = "Review saved successfully!";
+                ViewBag.EventId = TaskId; // If you use it in the view
+
+                return View("ViewStudentTaskMarks", marks);
+            }
+        }
+
+
+
+
+        public async Task<ActionResult> ViewStudentTaskMarks(int taskid, int studentid)
+        {
+            List<CommitteeMarkDetailDto> marks = new List<CommitteeMarkDetailDto>();
+
+            using (var client = new HttpClient())
+            {
+                client.BaseAddress = new Uri("http://localhost/TalentHunt1/api/"); // Adjust your base URL
+
+                var response = await client.GetAsync($"Main/GetMarksOneByOne?taskid={taskid}&studentid={studentid}");
+
+                if (response.IsSuccessStatusCode)
+                {
+                    var jsonString = await response.Content.ReadAsStringAsync();
+                    marks = JsonConvert.DeserializeObject<List<CommitteeMarkDetailDto>>(jsonString);
+                }
+                else if (response.StatusCode == HttpStatusCode.NotFound)
+                {
+                    ViewBag.Message = "No marks found for this student in this task.";
+                }
+                else
+                {
+                    ViewBag.Message = "Error occurred while fetching data.";
+                }
+            }
+
+            return View(marks);
+        }
+        [HttpPost]
+        public JsonResult SaveCommitteeRatings1( List<EventReviews> ratings)
         {
             using (var db = new Talent_HuntEntities6())
             {
@@ -1961,34 +2061,6 @@ namespace Talent_Hunt.Controllers
             }
 
             return Json(new { success = true, message = "All ratings saved successfully!" });
-        }
-
-        public async Task<ActionResult> ViewStudentTaskMarks(int taskid, int studentid)
-        {
-            List<CommitteeMarkDetailDto> marks = new List<CommitteeMarkDetailDto>();
-
-            using (var client = new HttpClient())
-            {
-                client.BaseAddress = new Uri("http://localhost/TalentHunt1/api/"); // Adjust your base URL
-
-                var response = await client.GetAsync($"Main/GetMarksOneByOne?taskid={taskid}&studentid={studentid}");
-
-                if (response.IsSuccessStatusCode)
-                {
-                    var jsonString = await response.Content.ReadAsStringAsync();
-                    marks = JsonConvert.DeserializeObject<List<CommitteeMarkDetailDto>>(jsonString);
-                }
-                else if (response.StatusCode == HttpStatusCode.NotFound)
-                {
-                    ViewBag.Message = "No marks found for this student in this task.";
-                }
-                else
-                {
-                    ViewBag.Message = "Error occurred while fetching data.";
-                }
-            }
-
-            return View(marks);
         }
 
 

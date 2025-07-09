@@ -13,7 +13,7 @@
         @Html.AntiForgeryToken()
     }
 
-    <!-- Submission Image with Zoom Buttons in Top-Right Corner -->
+    <!-- Submission Image with Zoom Buttons -->
     <div class="text-center mb-4 position-relative d-inline-block">
         <img id="submissionImage"
              src="http://localhost/TalentHunt1/Images/@Model.PathofSubmission"
@@ -21,32 +21,14 @@
              style="max-height: 300px; object-fit: contain; transition: transform 0.3s ease;"
              alt="Submission Image" />
 
-        <!-- Zoom Buttons in Top-Right -->
         <div style="position: absolute; top: 10px; right: 10px; display: flex; flex-direction: column; gap: 5px;">
-            <button type="button"
-                    class="btn btn-sm btn-outline-primary"
-                    title="Zoom In"
-                    onclick="zoomImage(1.2)">
-                +
-            </button>
-
-            <button type="button"
-                    class="btn btn-sm btn-outline-secondary"
-                    title="Zoom Out"
-                    onclick="zoomImage(0.8)">
-                −
-            </button>
-
-            <button type="button"
-                    class="btn btn-sm btn-outline-danger"
-                    title="Reset Zoom"
-                    onclick="resetZoom()">
-                Reset
-            </button>
+            <button type="button" class="btn btn-sm btn-outline-primary" title="Zoom In" onclick="zoomImage(1.2)">+</button>
+            <button type="button" class="btn btn-sm btn-outline-secondary" title="Zoom Out" onclick="zoomImage(0.8)">−</button>
+            <button type="button" class="btn btn-sm btn-outline-danger" title="Reset Zoom" onclick="resetZoom()">Reset</button>
         </div>
     </div>
 
-    <!-- Display submission details -->
+    <!-- Submission Info -->
     <div class="mb-3 row">
         <label class="col-sm-3 fw-bold">Submitted By:</label>
         <div class="col-sm-9">
@@ -67,12 +49,20 @@
         </div>
     </div>
 
+    <!-- Feedback Textarea -->
+    <div class="row mb-3">
+        <label class="col-sm-3 fw-bold" for="Feedback">Feedback:</label>
+        <div class="col-sm-9">
+            <textarea id="Feedback" class="form-control" rows="4" placeholder="Write feedback..."></textarea>
+        </div>
+    </div>
+
     <!-- Hidden CommitteeMemberId -->
     <input type="hidden" id="CommitteeMemberId" value="@ViewBag.CommitteeMemberId" />
 
     <!-- Submit Button -->
     <div class="text-center mt-4">
-        <button type="button" class="btn btn-success px-4" onclick="submitMarks()">Submit Marks</button>
+        <button type="button" class="btn btn-success px-4" onclick="submitMarks()">Submit Marks & Feedback</button>
     </div>
 
     <!-- Compare Button -->
@@ -81,11 +71,26 @@
     </div>
 </div>
 
-<script>
+@section Scripts {
+    <script>
+    let currentScale = 1;
+
+    function zoomImage(factor) {
+        const img = document.getElementById("submissionImage");
+        currentScale *= factor;
+        img.style.transform = `scale(${currentScale})`;
+    }
+
+    function resetZoom() {
+        currentScale = 1;
+        document.getElementById("submissionImage").style.transform = "scale(1)";
+    }
+
     function submitMarks() {
         var marks = document.getElementById("Marks").value;
         var submissionId = "@Model.Id";
         var committeeMemberId = document.getElementById("CommitteeMemberId").value;
+        var feedback = document.getElementById("Feedback").value;
 
         if (!committeeMemberId || committeeMemberId === "0") {
             alert("Committee Member ID is missing. Please log in again.");
@@ -98,6 +103,7 @@
         formData.append("SubmissionId", submissionId);
         formData.append("CommitteeMemberId", committeeMemberId);
         formData.append("Marks", marks);
+        formData.append("Feedback", feedback);
         formData.append("__RequestVerificationToken", token);
 
         fetch('/Admin/Marks', {
@@ -115,18 +121,5 @@
             alert("Error: " + error);
         });
     }
-
-    // Zoom functionality
-    let currentScale = 1;
-
-    function zoomImage(factor) {
-        const img = document.getElementById("submissionImage");
-        currentScale *= factor;
-        img.style.transform = `scale(${currentScale})`;
-    }
-
-    function resetZoom() {
-        currentScale = 1;
-        document.getElementById("submissionImage").style.transform = "scale(1)";
-    }
-</script>
+    </script>
+}

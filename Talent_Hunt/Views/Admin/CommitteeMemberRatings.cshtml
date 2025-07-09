@@ -1,0 +1,68 @@
+﻿@model List<Talent_Hunt.Models.CommitteeMemberReviewDto>
+
+@{
+    ViewBag.Title = "Committee Member Ratings";
+}
+
+<head>
+    <!-- Font Awesome for star icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+    <style>
+        .fas.fa-star,
+        .far.fa-star {
+            color: gold;
+            font-size: 20px;
+        }
+
+        .rating-number {
+            font-size: 14px;
+            font-style: italic;
+            color: #6c757d; /* Bootstrap's muted text */
+            margin-left: 5px;
+        }
+    </style>
+</head>
+
+<h2 class="text-primary">Ratings for @ViewBag.MemberName</h2>
+
+<table class="table table-bordered table-striped mt-3">
+    <thead class="table-dark">
+        <tr>
+            <th>Student Name</th>
+            <th>Task Description</th>
+            <th>Rating</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>@item.StudentName</td>
+                <td>@item.TaskDescription</td>
+                <td>
+                    <div class="text-warning">
+                        @{
+                            int fullStars = item.Review;
+                            int emptyStars = 5 - fullStars;
+                        }
+
+                        @* Render filled stars *@
+                        @for (int i = 0; i < fullStars; i++)
+                        {
+                            <i class="fas fa-star"></i>
+                        }
+
+                        @* Render empty stars *@
+                        @for (int i = 0; i < emptyStars; i++)
+                        {
+                            <i class="far fa-star"></i>
+                        }
+
+                        @* Display numeric rating like (4) *@
+                        <span class="rating-number">(@item.Review)</span>
+                    </div>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

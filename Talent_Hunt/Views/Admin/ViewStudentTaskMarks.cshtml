@@ -1,10 +1,55 @@
-﻿@model List<Talent_Hunt.Models.CommitteeMarkDetailDto>
+﻿@*@model List<Talent_Hunt.Models.CommitteeMarkDetailDto>
+
+    @{
+        ViewBag.Title = "Marks Given by Committee Members";
+    }
+
+    <h2 class="text-primary">Marks by Committee Members</h2>
+
+    @if (ViewBag.Message != null)
+    {
+        <div class="alert alert-warning">@ViewBag.Message</div>
+    }
+    else if (Model != null && Model.Any())
+    {
+        <table class="table table-bordered">
+            <thead class="table-dark">
+                <tr>
+                    <th>Committee Member</th>
+                    <th>Mark</th>
+                    <th>Feedback</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var mark in Model)
+                {
+                    <tr>
+                        <td>@mark.CommitteeMemberName</td>
+                        <td>@mark.Mark</td>
+                        <td>@mark.Feedback</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
+    else
+    {
+        <p>No data available.</p>
+    }*@
+@model List<Talent_Hunt.Models.CommitteeMarkDetailDto>
 
 @{
     ViewBag.Title = "Marks Given by Committee Members";
+    int studentId = Convert.ToInt32(Session["UserId"]);
+    int eventId = ViewBag.EventId ?? 0;
 }
 
 <h2 class="text-primary">Marks by Committee Members</h2>
+
+@if (TempData["Message"] != null)
+{
+    <div class="alert alert-success">@TempData["Message"]</div>
+}
 
 @if (ViewBag.Message != null)
 {
@@ -17,7 +62,8 @@ else if (Model != null && Model.Any())
             <tr>
                 <th>Committee Member</th>
                 <th>Mark</th>
-                @*<th>Feedback</th>*@
+                <th>Feedback</th>
+                <th>Review</th>
             </tr>
         </thead>
         <tbody>
@@ -26,7 +72,24 @@ else if (Model != null && Model.Any())
                 <tr>
                     <td>@mark.CommitteeMemberName</td>
                     <td>@mark.Mark</td>
-                    @*<td>@mark.Feedback</td>*@
+                    <td>@mark.Feedback</td>
+                    <td>
+                        <form method="post" action="@Url.Action("SaveCommitteeRating", "Admin")">
+                            <input type="hidden" name="TaskId" value="@mark.TaskId" />
+                            <input type="hidden" name="StudentId" value="@studentId" />
+                            <input type="hidden" name="MemberId" value="@mark.CommitteeMemberId" />
+                            <input type="hidden" name="Review" class="rating-value" />
+
+                            <div class="star-rating" data-memberid="@mark.CommitteeMemberId">
+                                @for (int i = 1; i <= 5; i++)
+                                {
+                                    <span class="star" data-value="@i">&#9733;</span>
+                                }
+                            </div>
+
+                            <button type="submit" class="btn btn-primary btn-sm mt-1">Save</button>
+                        </form>
+                    </td>
                 </tr>
             }
         </tbody>
@@ -35,4 +98,35 @@ else if (Model != null && Model.Any())
 else
 {
     <p>No data available.</p>
+}
+
+@section Scripts {
+    <script>
+        $(document).ready(function () {
+            $(".star").click(function () {
+                const value = $(this).data("value");
+                const container = $(this).closest(".star-rating");
+
+                container.find(".star").each(function (index) {
+                    $(this).css("color", index < value ? "gold" : "gray");
+                });
+
+                container.closest("form").find(".rating-value").val(value);
+            });
+        });
+    </script>
+
+    <style>
+        .star {
+            cursor: pointer;
+            color: gray;
+            font-size: 20px;
+            transition: color 0.2s ease-in-out;
+        }
+
+            .star:hover,
+            .star:hover ~ .star {
+                color: gold !important;
+            }
+    </style>
 }

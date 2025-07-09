@@ -1,0 +1,47 @@
+﻿@model List<Talent_Hunt.Models.CommitteeMemberReviewDto>
+
+@{
+    ViewBag.Title = "Committee Member Ratings";
+}
+
+<h3 class="mb-4 text-primary">Ratings for @ViewBag.MemberName</h3>
+
+@if (!Model.Any())
+{
+    <div class="alert alert-info">No ratings found for this member.</div>
+}
+else
+{
+    <table class="table table-bordered shadow-sm text-center">
+        <thead class="table-dark">
+            <tr>
+                <th>Student Name</th>
+                <th>Task Description</th>
+                <th>Review</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var review in Model)
+            {
+                <tr>
+                    <td class="fw-semibold">@review.StudentName</td>
+                    <td>@review.TaskDescription</td>
+                    <td>
+                        @for (int i = 1; i <= 5; i++)
+                        {
+                            if (i <= review.Review)
+                            {
+                                <i class="fas fa-star text-warning"></i>
+                            }
+                            else
+                            {
+                                <i class="far fa-star text-secondary"></i>
+                            }
+                        }
+                        <span class="ms-1 text-muted">(@review.Review)</span>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
